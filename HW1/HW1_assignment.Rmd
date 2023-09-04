@@ -206,10 +206,45 @@ length(mrgpvals01)
 (3) What is the p-value cutoff for 1% FDR? Plot and describe the rejection region.
 (10 point)
 
+The p-value cutoff for 1% FDR is .002413249. 
+
+```{r}
+source("fdr.R")
+q=.01
+cutoff <- fdr_cut(mrgpvals, q)
+cutoff
+
+p = 1125
+mrgpvals_ordered<-mrgpvals[order(mrgpvals,decreasing=F)]
+plot(mrgpvals_ordered,pch=19)
+abline(0,1/p)
+
+abline(h=cutoff,lty=2,col=3,lwd=3)
+abline(0,q/p,col=2,lwd=2)
+
+signif <- mrgpvals_ordered <= cutoff  
+points(mrgpvals_ordered,
+	   col=signif+1,pch=19) # The red dots are discoveries
+```
+
 (4) How many discoveries do you find at q=0.01 and how many do you expect to be false?
 (10 point)
 
+At q=.01, there are 290 discoveries. 
+
+```{r}
+table(mrgpvals<=cutoff) # number of discoveries and non-discoveries
+
+#the betas aren't saved ?
+t<-table(beta,mrgpvals<=cutoff)
+t[1,2]/(sum(t[,2])) #get False Discovery Proportion
+```
+
 (5) What are the 10 most significant words? Do these results make sense to you? What are the advantages and disadvantages of our FDR anaysis?
 (10 point)
+
+```{r}
+tail(mrgpvals_ordered, 10) #select 10 most significant words
+```
 
 
