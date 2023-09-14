@@ -216,7 +216,7 @@ cutoff
 
 p = 1125
 mrgpvals_ordered<-mrgpvals[order(mrgpvals,decreasing=F)]
-plot(mrgpvals_ordered,pch=19)
+plot(mrgpvals_ordered,pch=19, main=paste('FDR =',q), ylab="p-values", xlab="tests ordered by p-value")
 abline(0,1/p)
 
 abline(h=cutoff,lty=2,col=3,lwd=3)
