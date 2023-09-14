@@ -1,5 +1,6 @@
 ---
 title: "Homework 1 Assignment"
+author: "Charlie Marcou, Carrie Mecca, Jessie Bustin and Jasmine Zhang"
 fontsize: 10 pt
 output: 
     pdf_document:
@@ -189,7 +190,7 @@ hist(mrgpvals)
 (2) Let's do standard statistical testing. How many tests are significant at the alpha level 0.05 and 0.01?
 (10 point)
 
-The marginal p-values are already the p-values for t-tests of the predictor in each marginal regression. At alpha = .05, we have 461 significant tests. At alpha =.01 we have 348 significatn tests.
+The marginal p-values are already the p-values for t-tests of the predictor in each marginal regression. At alpha = .05, we have 461 significant tests. At alpha =.01 we have 348 significant tests.
 
 ```{r}
 alpha=.05
@@ -206,7 +207,7 @@ length(mrgpvals01)
 (3) What is the p-value cutoff for 1% FDR? Plot and describe the rejection region.
 (10 point)
 
-The p-value cutoff for 1% FDR is .002413249. 
+The p-value cutoff for 1% FDR is .002413249.  ##Need to describe rejection region
 
 ```{r}
 source("fdr.R")
@@ -240,7 +241,7 @@ sum(mrgpvals<=cutoff)*0.01
 (5) What are the 10 most significant words? Do these results make sense to you? What are the advantages and disadvantages of our FDR anaysis?
 (10 point)
 
-The 10 most significant words were: not, horrible, great, bad, nasty, disappointed, new, but,same, poor. Many of these words are direct expressions of a reviewer's sentiment about the product and so make sense as being significant such as "disappointed" or "great". However, there are a few significant words such as "not", "but" and "same" which are less obviously indicative of product rating. It is possible that these words frequently co-occur with other more meaningful words, which could explain the significance. This is a potential disadvantage of the FDR analysis, because we are not considering additive or interactive effect that words might have together.
+The 10 most significant words were: not, horrible, great, bad, nasty, disappointed, new, but,same, poor. Many of these words are direct expressions of a reviewer's sentiment about the product and so make sense as being significant such as "disappointed" or "great". However, there are a few significant words such as "not", "but" and "same" which are less obviously indicative of product rating. It is possible that these words frequently co-occur with other more meaningful words, which could explain the significance. This is a potential disadvantage of the FDR analysis, because we are not considering additive or interactive effect that words might have together. ##Need to discuss advantages
 
 ```{r}
 head(mrgpvals_ordered, 10) #select 10 most significant words
