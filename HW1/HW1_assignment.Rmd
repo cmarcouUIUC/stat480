@@ -230,14 +230,11 @@ points(mrgpvals_ordered,
 (4) How many discoveries do you find at q=0.01 and how many do you expect to be false?
 (10 point)
 
-At q=.01, there are 290 discoveries. 
+At q=.01, there are 290 discoveries. We expect approximately 3 of those discoveries to be false. 
 
 ```{r}
 table(mrgpvals<=cutoff) # number of discoveries and non-discoveries
-
-#the betas aren't saved ?
-t<-table(beta,mrgpvals<=cutoff)
-t[1,2]/(sum(t[,2])) #get False Discovery Proportion
+sum(mrgpvals<=cutoff)*0.01
 ```
 
 (5) What are the 10 most significant words? Do these results make sense to you? What are the advantages and disadvantages of our FDR anaysis?
