@@ -241,7 +241,7 @@ sum(mrgpvals<=cutoff)*0.01
 (10 point)
 
 ```{r}
-tail(mrgpvals_ordered, 10) #select 10 most significant words
+head(mrgpvals_ordered, 10) #select 10 most significant words
 ```
 
 
