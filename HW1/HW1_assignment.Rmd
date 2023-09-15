@@ -207,7 +207,7 @@ length(mrgpvals01)
 (3) What is the p-value cutoff for 1% FDR? Plot and describe the rejection region.
 (10 point)
 
-The p-value cutoff for 1% FDR is .002413249.  ##Need to describe rejection region
+The p-value cutoff for 1% FDR is .002413249.  The rejection region is visible in the plot and encompasses the points in red.  This area is defined by a cutoff for the p-value that is found using the set FDR of 1% for conducting multiple tests.  The false discovery rate, or number of tests that return a false positive is controlled and a region of p-values is identified where the null hypothesis is rejected.  ##is this ok?
 
 ```{r}
 source("fdr.R")
