@@ -56,19 +56,24 @@ plot(VALUE ~ factor(BATHS),
 
 Regress log price onto all variables but mortgage. What is the R2? How many coefficients are used in this model and how many are significant at 10% FDR? Re-run regression with only the significant covariates, and compare R2 to the full model.
 
+The R^2 is .447301. There are 40 coefficients.
 ```{r}
 library(knitr) # library for nice R markdown output
 # regress log(PRICE) on everything except AMMORT 
 
 pricey <- glm(log(LPRICE) ~ .-AMMORT, data=homes)
-
+cor(pricey$fitted,log(homes$LPRICE))^2
+summary(pricey)
 # extract pvalues
 
 pvals <- summary(pricey)$coef[-1,4]
 
 # example: those variable insignificant at alpha=0.05
 
-names(pvals)[pvals>.05]
+names(pvals)[pvals>.10]
+pricey2 <- glm(log(LPRICE) ~ .-AMMORT -BEDRMS, data=homes) ##Need to drop categorical levels of etrany and stateco and statect ##Unless she would like to see those kept in
+summary(pricey2)
+cor(pricey2$fitted,log(homes$LPRICE))^2
 
 # you'll want to replace .05 with your FDR cutoff
 # you can use the `-AMMORT' type syntax to drop variables
@@ -82,6 +87,9 @@ Fit a regression for whether the buyer had more than 20 percent down (onto every
 # create a var for downpayment being greater than 20%
 homes$gt20dwn <- 
   factor(0.2<(homes$LPRICE-homes$AMMORT)/homes$LPRICE)
+
+pricey3 <- glm(homes$gt20dwn ~ .-AMMORT -LPRICE ,data=homes, family=binomial)
+##Should we add and describe an interaction in this model or in a new model?
 ```
 
 
