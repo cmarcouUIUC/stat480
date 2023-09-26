@@ -96,9 +96,10 @@ pricey3 <- glm(homes$gt20dwn ~ .-AMMORT -LPRICE ,data=homes, family=binomial)
 ## Question 3
 
 Focus only on a subset of homes worth > 100k. Train the full model from Question 1 on this subset. Predict the left-out homes using this model. What is the out-of-sample fit (i.e. $R^2$)? Explain why you get this value.
+
+We see a lower R2 than with the training data due to overfitting the model on that data.
 ```{r}
 subset <- which(homes$VALUE>100000)
-
 # Use the code ``deviance.R" to compute OOS deviance
 
 source("deviance.R")
@@ -138,6 +139,7 @@ Y=0& \quad \text{for less than 5 stars}.
 
 Fit a LASSO model with only product categories. The start code prepares a sparse design matrix of 142 product categories. What is the in-sample R2 for the AICc slice of the LASSO path? Why did we use standardize FALSE?
 
+We can use standardize false because the x's are on the same scale already because they are all factor levels. 
 
 ```{r data, results='asis'}
 
@@ -188,8 +190,9 @@ lasso1<- gamlr(x_cat, 	y=Y, standardize=FALSE,family="binomial",
 lambda.min.ratio=1e-3)
 
 
-
-
+plot(lasso1)
+B <- coef(lasso1)[-1,]
+B[c(which.min(B),which.max(B))]
 ```
 
 
@@ -215,6 +218,9 @@ x_cat2<-cbind(x_cat,spm)
 lasso2 <- gamlr(x_cat2, y=Y,lambda.min.ratio=1e-3,family="binomial")
 
 
+coefmat=as.matrix(coef(lasso2))
+
+head(coefmat[order(coefmat[, 1], decreasing=TRUE),],10)
 ```
 
 
