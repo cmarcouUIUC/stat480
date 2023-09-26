@@ -193,8 +193,6 @@ lambda.min.ratio=1e-3)
 
 
 plot(lasso1)
-B <- coef(lasso1)[-1,]
-B[c(which.min(B),which.max(B))]
 ```
 
 
@@ -203,8 +201,10 @@ B[c(which.min(B),which.max(B))]
 Fit a LASSO model with both product categories and the review content (i.e. the frequency of occurrence of words). Use AICc to select lambda.
 How many words were selected as predictive of a  5 star review? Which 10 words have the most positive effect on odds of a 5 star review? What is the interpretation of the coefficient for the word `discount'? 
 
+At a log-lambda of -8.334091, we select 1154 words and categories
 
 The top 10 words with positive effect on odds of a 5 star review are: worried, Breads, plus, Almond Leaveners & Yeasts, excellently, find, grains, Computers, Features, hound. ###this is weird, i think she probably wants just the words not words and categories. Not sure how to get the top ten of those programatically though. 
+
 The coefficient of discount is: 6.961539. This means that we expect log odds to increase by 6.961539 when the word discount is included in a review. 
 ```{r xtable, results='asis'}
 
@@ -226,7 +226,10 @@ plot(lasso2)
 
 lassobeta <- coef(lasso2) 
 
-sum(lassobeta!=0) ##1154 selected? 
+#get log lambda
+log(lasso2$lambda[which.min(AICc(lasso2))])
+
+sum(lassobeta!=0) ##1154 selected? might need to figure out how to subset this to just words?
 
 coefmat=as.matrix(coef(lasso2))
 
@@ -249,7 +252,7 @@ cv.fit <- cv.gamlr(x_cat2,
 				   family="binomial",
 				   verb=TRUE)
 
- 
+
 
 
 ```
