@@ -56,7 +56,7 @@ plot(VALUE ~ factor(BATHS),
 
 Regress log price onto all variables but mortgage. What is the R2? How many coefficients are used in this model and how many are significant at 10% FDR? Re-run regression with only the significant covariates, and compare R2 to the full model.
 
-The R^2 is .447301. There are 40 coefficients.
+The R^2 is .447301. There are 40 coefficients. Of these 40 coefficients, we can see that 4 are not significant.
 ```{r}
 library(knitr) # library for nice R markdown output
 # regress log(PRICE) on everything except AMMORT 
