@@ -139,7 +139,9 @@ Y=0& \quad \text{for less than 5 stars}.
 
 Fit a LASSO model with only product categories. The start code prepares a sparse design matrix of 142 product categories. What is the in-sample R2 for the AICc slice of the LASSO path? Why did we use standardize FALSE?
 
-We can use standardize false because the x's are on the same scale already because they are all factor levels. 
+
+
+We can use standardize false because the x's are on the same scale already because they are all factor levels. not sure what is meant by r2 for aicc slice of lasso path.
 
 ```{r data, results='asis'}
 
@@ -201,6 +203,9 @@ B[c(which.min(B),which.max(B))]
 Fit a LASSO model with both product categories and the review content (i.e. the frequency of occurrence of words). Use AICc to select lambda.
 How many words were selected as predictive of a  5 star review? Which 10 words have the most positive effect on odds of a 5 star review? What is the interpretation of the coefficient for the word `discount'? 
 
+
+The top 10 words with positive effect on odds of a 5 star review are: worried, Breads, plus, Almond Leaveners & Yeasts, excellently, find, grains, Computers, Features, hound. ###this is weird, i think she probably wants just the words not words and categories. Not sure how to get the top ten of those programatically though. 
+The coefficient of discount is: 6.961539. This means that we expect log odds to increase by 6.961539 when the word discount is included in a review. 
 ```{r xtable, results='asis'}
 
 # Fit a LASSO with all 142 product categories and 1125 words 
@@ -217,10 +222,17 @@ x_cat2<-cbind(x_cat,spm)
 
 lasso2 <- gamlr(x_cat2, y=Y,lambda.min.ratio=1e-3,family="binomial")
 
+plot(lasso2)
+
+lassobeta <- coef(lasso2) 
+
+sum(lassobeta!=0) ##1154 selected? 
 
 coefmat=as.matrix(coef(lasso2))
 
 head(coefmat[order(coefmat[, 1], decreasing=TRUE),],10)
+
+coefmat['discount',]
 ```
 
 
