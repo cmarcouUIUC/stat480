@@ -56,7 +56,7 @@ plot(VALUE ~ factor(BATHS),
 
 Regress log price onto all variables but mortgage. What is the R2? How many coefficients are used in this model and how many are significant at 10% FDR? Re-run regression with only the significant covariates, and compare R2 to the full model.
 
-The R^2 is .447301. There are 40 coefficients. Of these 40 coefficients, we can see that 4 are not significant.
+The R^2 is .4565419 (.447301 charlie, I had a different result here). There are 40 coefficients. Of these 40 coefficients, we can see that 4 are not significant.
 ```{r}
 library(knitr) # library for nice R markdown output
 # regress log(PRICE) on everything except AMMORT 
@@ -71,7 +71,11 @@ pvals <- summary(pricey)$coef[-1,4]
 # example: those variable insignificant at alpha=0.05
 
 names(pvals)[pvals>.10]
-pricey2 <- glm(log(LPRICE) ~ .-AMMORT -BEDRMS, data=homes) ##Need to drop categorical levels of etrany and stateco and statect ##Unless she would like to see those kept in
+```
+With only the significant covariates, the R^2 is .4564641. In comparison to the full model, there is a slight decrease in the R^2. 
+```{r}
+#fit regression without non-significant variables
+pricey2 <- glm(log(LPRICE) ~ .-AMMORT -BEDRMS -NUNITS, data=homes) ##drop BEDRMS, NUNITS. leave ETRANSY, STATECO and STATECT since categorical levels.
 summary(pricey2)
 cor(pricey2$fitted,log(homes$LPRICE))^2
 
@@ -83,13 +87,19 @@ cor(pricey2$fitted,log(homes$LPRICE))^2
 
 Fit a regression for whether the buyer had more than 20 percent down (onto everything but AMMORT and LPRICE). Interpret effects for Pennsylvania state, 1st home buyers and the number of bathrooms. Add and describe an interaction between 1st home-buyers and the number of baths.
 
+
+
 ```{r}
 # create a var for downpayment being greater than 20%
 homes$gt20dwn <- 
   factor(0.2<(homes$LPRICE-homes$AMMORT)/homes$LPRICE)
 
 pricey3 <- glm(homes$gt20dwn ~ .-AMMORT -LPRICE ,data=homes, family=binomial)
+summary(pricey3)
 ##Should we add and describe an interaction in this model or in a new model?
+
+pricey4 <- glm(homes$gt20dwn  ~ .-AMMORT -LPRICE + FRSTHO:BATHS ,data=homes, family=binomial)
+summary(pricey4)
 ```
 
 
@@ -138,8 +148,6 @@ Y=0& \quad \text{for less than 5 stars}.
 
 
 Fit a LASSO model with only product categories. The start code prepares a sparse design matrix of 142 product categories. What is the in-sample R2 for the AICc slice of the LASSO path? Why did we use standardize FALSE?
-
-
 
 We can use standardize false because the x's are on the same scale already because they are all factor levels. not sure what is meant by r2 for aicc slice of lasso path.
 
@@ -203,7 +211,7 @@ How many words were selected as predictive of a  5 star review? Which 10 words h
 
 At a log-lambda of -8.334091, we select 1154 words and categories
 
-The top 10 words with positive effect on odds of a 5 star review are: worried, Breads, plus, Almond Leaveners & Yeasts, excellently, find, grains, Computers, Features, hound. ###this is weird, i think she probably wants just the words not words and categories. Not sure how to get the top ten of those programatically though. 
+The top 10 words with positive effect on odds of a 5 star review are: worried, Breads, plus, Almond Leaveners & Yeasts, excellently, find, grains, Computers, Features, hound. ###this is weird, i think she probably wants just the words not words and categories. Not sure how to get the top ten of those programatically though. ##i don't get how we would separate them either but why include categories if she was just interested in the words? - Carrie
 
 The coefficient of discount is: 6.961539. This means that we expect log odds to increase by 6.961539 when the word discount is included in a review. 
 ```{r xtable, results='asis'}
@@ -244,6 +252,8 @@ coefmat['discount',]
 Continue with the model from Question 5.
 Run cross-validation to obtain the best lambda value that minimizes OOS deviance. How many coefficients are nonzero then? How many are nonzero under the 1se rule?  
 
+The lambda value that minimizes OOS deviance is 0.001281808. With that lambda, there are 988 non-zero coefficients. Using the 1se rule instead, there are only 811 non-zero coefficients.
+
 ```{r xtable data, results='asis'}
 
 cv.fit <- cv.gamlr(x_cat2,
@@ -252,9 +262,14 @@ cv.fit <- cv.gamlr(x_cat2,
 				   family="binomial",
 				   verb=TRUE)
 
+min_lambda <- cv.fit$lambda.min
+min_lambda
 
+cv.fit.coef <- coef(cv.fit, select="min") #coeff 
+length(rownames(cv.fit.coef)[cv.fit.coef[,1]!= 0])
 
-
+cv.fit.coef2 <- coef(cv.fit, select="1se") #coeff 
+length(rownames(cv.fit.coef2)[cv.fit.coef2[,1]!= 0])
 ```
 
 
