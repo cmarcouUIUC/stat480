@@ -56,7 +56,7 @@ plot(VALUE ~ factor(BATHS),
 
 Regress log price onto all variables but mortgage. What is the R2? How many coefficients are used in this model and how many are significant at 10% FDR? Re-run regression with only the significant covariates, and compare R2 to the full model.
 
-The R^2 is .4565419 (.447301 charlie, I had a different result here). There are 40 coefficients. Of these 40 coefficients, we can see that 5 are not significant. The five that are no significant are: "ETRANSY" "STATECO" "STATECT" "BEDRMS" and "NUNITS"
+The R^2 is .447301. There are 40 coefficients. Of these 40 coefficients, we can see that 5 are not significant. The five that are no significant are: "ETRANSY" "STATECO" "STATECT" "BEDRMS" and "NUNITS"
 ```{r}
 library(knitr) # library for nice R markdown output
 # regress log(PRICE) on everything except AMMORT 
@@ -72,7 +72,7 @@ pvals <- summary(pricey)$coef[-1,4]
 
 names(pvals)[pvals>.10]
 ```
-With only the significant covariates, the R^2 is .4564641. In comparison to the full model, there is a slight decrease in the R^2. 
+With only the significant covariates, the R^2 is 0.4471981. In comparison to the full model, there is a slight decrease in the R^2. 
 ```{r}
 #fit regression without non-significant variables
 pricey2 <- glm(log(LPRICE) ~ .-AMMORT -BEDRMS -NUNITS, data=homes) ##drop BEDRMS, NUNITS. leave ETRANSY, STATECO and STATECT since categorical levels.
@@ -260,7 +260,7 @@ coefmat['discount',]
 Continue with the model from Question 5.
 Run cross-validation to obtain the best lambda value that minimizes OOS deviance. How many coefficients are nonzero then? How many are nonzero under the 1se rule?  
 
-The lambda value that minimizes OOS deviance is 0.001281808. With that lambda, there are 988 non-zero coefficients. Using the 1se rule instead, there are only 811 non-zero coefficients.
+The lambda value that minimizes OOS deviance is 0.00137444. With that lambda, there are 974 non-zero coefficients. Using the 1se rule instead, there are only 811 non-zero coefficients.
 (carrie I"m getting 
 [1] 0.00137444
 [1] 974
