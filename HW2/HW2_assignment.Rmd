@@ -56,7 +56,7 @@ plot(VALUE ~ factor(BATHS),
 
 Regress log price onto all variables but mortgage. What is the R2? How many coefficients are used in this model and how many are significant at 10% FDR? Re-run regression with only the significant covariates, and compare R2 to the full model.
 
-The R^2 is .4565419 (.447301 charlie, I had a different result here). There are 40 coefficients. Of these 40 coefficients, we can see that 4 are not significant.
+The R^2 is .4565419 (.447301 charlie, I had a different result here). There are 40 coefficients. Of these 40 coefficients, we can see that 5 are not significant. The five that are no significant are: "ETRANSY" "STATECO" "STATECT" "BEDRMS" and "NUNITS"
 ```{r}
 library(knitr) # library for nice R markdown output
 # regress log(PRICE) on everything except AMMORT 
@@ -87,8 +87,13 @@ cor(pricey2$fitted,log(homes$LPRICE))^2
 
 Fit a regression for whether the buyer had more than 20 percent down (onto everything but AMMORT and LPRICE). Interpret effects for Pennsylvania state, 1st home buyers and the number of bathrooms. Add and describe an interaction between 1st home-buyers and the number of baths.
 
+STATEPA          6.011e-01  1.007e-01   5.968 2.40e-09 ***
+BEDRMS          -2.086e-02  2.908e-02  -0.717 0.473120 
+FRSTHOY         -3.700e-01  5.170e-02  -7.156 8.29e-13 ***
 
-
+For a buyer in pennsylvania we expect the log odds of the downpayment being greater than 20% to increase by .6011
+For a one unit increase in bedrooms, we expect the log odds of the downpayment being greater than 20% to change by -.00286
+For a first time home buyer, we expect the log odds of the the downpayment being greater than 20% to change by -.37
 ```{r}
 # create a var for downpayment being greater than 20%
 homes$gt20dwn <- 
@@ -107,7 +112,7 @@ summary(pricey4)
 
 Focus only on a subset of homes worth > 100k. Train the full model from Question 1 on this subset. Predict the left-out homes using this model. What is the out-of-sample fit (i.e. $R^2$)? Explain why you get this value.
 
-We see a lower R2 than with the training data due to overfitting the model on that data.
+We see a lower R2 than before due to overfitting the model on that data.
 ```{r}
 subset <- which(homes$VALUE>100000)
 # Use the code ``deviance.R" to compute OOS deviance
@@ -120,8 +125,11 @@ ybar <- mean(log(homes$LPRICE[-subset]))
 
 D0 <- deviance(y=log(homes$LPRICE[-subset]), pred=ybar)
 
+
+
 # - don't forget family="binomial"!
 # - use +A*B in forumula to add A interacting with B
+####These hints seem odd to me since we didn't use interaction or family=binomial in problem #1 -charlie
 ```
 
 # Amazon Reviews
@@ -253,6 +261,11 @@ Continue with the model from Question 5.
 Run cross-validation to obtain the best lambda value that minimizes OOS deviance. How many coefficients are nonzero then? How many are nonzero under the 1se rule?  
 
 The lambda value that minimizes OOS deviance is 0.001281808. With that lambda, there are 988 non-zero coefficients. Using the 1se rule instead, there are only 811 non-zero coefficients.
+(carrie I"m getting 
+[1] 0.00137444
+[1] 974
+[1] 916
+not sure what the discrepancy is on these problems)
 
 ```{r xtable data, results='asis'}
 
