@@ -115,7 +115,8 @@ summary(pricey4)
 
 Focus only on a subset of homes worth > 100k. Train the full model from Question 1 on this subset. Predict the left-out homes using this model. What is the out-of-sample fit (i.e. $R^2$)? Explain why you get this value.
 
-We see a lower R2 than before due to overfitting the model on that data.
+For the training data, the subset of homes worth > 100k, the R^2 is 0.3919407. The out-of-sample data, however, has a lower R^2 at only 0.1834929. The reason the test set R^2 is lower is because the model is overfitting on the subset of higher-priced homes and, subsequently, is unable to extrapolate to and perform as well on the lower-priced subset. #may rewrite
+
 ```{r}
 subset <- which(homes$VALUE>100000)
 # Use the code ``deviance.R" to compute OOS deviance
@@ -133,7 +134,7 @@ cor(subset_pricey$fitted,log(homes[subset,c("LPRICE")]))^2
 summary(subset_pricey)
 
 predictions <- predict(subset_pricey, homes[-subset,])
-cor(predictions,log(homes[-subset,c("LPRICE")]))^2 #not sure I did this right?
+cor(predictions,log(homes[-subset,c("LPRICE")]))^2 
 ```
 
 # Amazon Reviews
