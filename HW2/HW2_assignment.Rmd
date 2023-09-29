@@ -1,5 +1,6 @@
 ---
 title: "Homework 2 Assignment"
+author: "Carrie Mecca, Charlie Marcou, Jessie Bustin and Jasmine Zhang"
 fontsize: 10 pt
 output: 
     pdf_document:
@@ -87,9 +88,6 @@ cor(pricey2$fitted,log(homes$LPRICE))^2
 
 Fit a regression for whether the buyer had more than 20 percent down (onto everything but AMMORT and LPRICE). Interpret effects for Pennsylvania state, 1st home buyers and the number of bathrooms. Add and describe an interaction between 1st home-buyers and the number of baths.
 
-STATEPA          6.011e-01  1.007e-01   5.968 2.40e-09 ***
-BEDRMS          -2.086e-02  2.908e-02  -0.717 0.473120 
-FRSTHOY         -3.700e-01  5.170e-02  -7.156 8.29e-13 ***
 
 For a buyer in pennsylvania we expect the log odds of the downpayment being greater than 20% to increase by .6011
 For a one unit increase in bedrooms, we expect the log odds of the downpayment being greater than 20% to change by -.00286
@@ -269,11 +267,7 @@ Continue with the model from Question 5.
 Run cross-validation to obtain the best lambda value that minimizes OOS deviance. How many coefficients are nonzero then? How many are nonzero under the 1se rule?  
 
 The lambda value that minimizes OOS deviance is 0.00137444. With that lambda, there are 974 non-zero coefficients. Using the 1se rule instead, there are only 831 non-zero coefficients (with a random seed of 250).
-(carrie I"m getting 
-[1] 0.00137444
-[1] 974
-[1] 916
-not sure what the discrepancy is on these problems)
+
 
 ```{r xtable data, results='asis'}
 
