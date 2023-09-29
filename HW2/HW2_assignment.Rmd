@@ -23,7 +23,7 @@ knitr::opts_chunk$set(echo = TRUE,
 
 # Predicting House Prices
 
-```{r}
+```{r echo=FALSE}
 ## Read in the data
 
 homes <- read.csv("homes2004.csv")
@@ -40,7 +40,7 @@ plot(VALUE ~ factor(BATHS),
     xlab="number of bathrooms", ylab="home value")
 ```
 
-```{r}
+```{r echo=FALSE}
 # You can try some quick plots.  Do more to build your intuition!
 
 #par(mfrow=c(1,2)) 
@@ -58,7 +58,7 @@ plot(VALUE ~ factor(BATHS),
 Regress log price onto all variables but mortgage. What is the R2? How many coefficients are used in this model and how many are significant at 10% FDR? Re-run regression with only the significant covariates, and compare R2 to the full model.
 
 The R^2 is .447301. There are 40 coefficients. Of these 40 coefficients, we can see that 5 are not significant. The five that are no significant are: "ETRANSY" "STATECO" "STATECT" "BEDRMS" and "NUNITS"
-```{r}
+```{r echo=FALSE}
 library(knitr) # library for nice R markdown output
 # regress log(PRICE) on everything except AMMORT 
 
@@ -73,8 +73,8 @@ pvals <- summary(pricey)$coef[-1,4]
 
 names(pvals)[pvals>.10]
 ```
-We drop BEDRMS and NUNITS, but do not drop the insignificant categorial levels. After this, the R^2 of the reduced model is 0.4471981. In comparison to the full model, there is a slight decrease in the R^2. ###Not sure if its helpful or neccessary to add the following: The shrinkage between the R^2 of the two models is .0001029.
-```{r}
+We drop BEDRMS and NUNITS, but do not drop the insignificant categorial levels. After this, the R^2 of the reduced model is 0.4471981. In comparison to the full model, there is a slight decrease in the R^2. The shrinkage between the R^2 of the two models is .0001029.
+```{r echo=FALSE}
 #fit regression without non-significant variables
 pricey2 <- glm(log(LPRICE) ~ .-AMMORT -BEDRMS -NUNITS, data=homes) ##drop BEDRMS, NUNITS. leave ETRANSY, STATECO and STATECT since categorical levels.
 summary(pricey2)
@@ -94,7 +94,7 @@ For a one unit increase in bedrooms, we expect the log odds of the downpayment b
 For a first time home buyer, we expect the log odds of the the downpayment being greater than 20% to change by -.37
 
 After expanding the model, we see a negative interaction between 1st time home buyers and number of bathrooms. This indicates that the log odds of the downpayment greater than 20% for each additional bathroom, will be lower for a first time home buyer than a buyer who has bough a home previously. 
-```{r}
+```{r echo=FALSE}
 # create a var for downpayment being greater than 20%
 homes$gt20dwn <- 
   factor(0.2<(homes$LPRICE-homes$AMMORT)/homes$LPRICE)
@@ -115,9 +115,9 @@ summary(pricey4)
 
 Focus only on a subset of homes worth > 100k. Train the full model from Question 1 on this subset. Predict the left-out homes using this model. What is the out-of-sample fit (i.e. $R^2$)? Explain why you get this value.
 
-For the training data, the subset of homes worth > 100k, the R^2 is 0.3919407. The out-of-sample data, however, has a lower R^2 at only 0.1834929. The reason the test set R^2 is lower is because the model is overfitting on the subset of higher-priced homes and, subsequently, is unable to extrapolate to and perform as well on the lower-priced subset. #may rewrite #I think we can probably say "and, subsequently, is unable to perform as well on the lower-priced subset. Using the model to extrapolate to homes with smaller prices would not be reasonable." something like this?? - charlie
+For the training data, the subset of homes worth > 100k, the R^2 is 0.3919407. The out-of-sample data, however, has a lower R^2 at only 0.1834929. The reason the test set R^2 is lower is because the model is overfitting on the subset of higher-priced homes and, subsequently, is unable to perform as well on the lower-priced subset. Using the model to extrapolate to homes with smaller prices would not be reasonable.
 
-```{r}
+```{r echo=FALSE}
 subset <- which(homes$VALUE>100000)
 # Use the code ``deviance.R" to compute OOS deviance
 
@@ -141,7 +141,7 @@ cor(predictions,log(homes[-subset,c("LPRICE")]))^2
 
 We will use the same datasets (review_subset.csv, word_freq.csv and words.csv) as in Assignment 1.
 
-```{r}
+```{r echo=FALSE}
 data<-read.table("Review_subset.csv",header=TRUE)
 
 words<-read.table("words.csv")
@@ -164,7 +164,7 @@ Fit a LASSO model with only product categories. The start code prepares a sparse
 
 We can use standardize false because the x's are on the same scale already because they are all factor levels. not sure what is meant by r2 for aicc slice of lasso path. The in-sample R2 for the best lambda is 0.1048737.
 
-```{r data, results='asis'}
+```{r data, results='asis', echo=FALSE}
 
 # Let's define the binary outcome
 
@@ -216,7 +216,7 @@ lambda.min.ratio=1e-3)
 plot(lasso1)
 
 lasso1.summary <- summary(lasso1)
-lasso1.summary[ (lasso1.summary$aicc ==min(lasso1.summary$aicc)),] #selected the row with the min aic. idk if that's what she meant ##I think that makes sense? I couldn't really tell what she was asking at all but I think this is a good best guess.
+lasso1.summary[ (lasso1.summary$aicc ==min(lasso1.summary$aicc)),]
 ```
 
 
@@ -227,10 +227,10 @@ How many words were selected as predictive of a  5 star review? Which 10 words h
 
 At a log-lambda of -8.334091, we select 1154 words and categories
 
-The top 10 words with positive effect on odds of a 5 star review are: worried, Breads, plus, Almond Leaveners & Yeasts, excellently, find, grains, Computers, Features, hound. ###this is weird, i think she probably wants just the words not words and categories. Not sure how to get the top ten of those programatically though. ##i don't get how we would separate them either but why include categories if she was just interested in the words? - Carrie
+The top 10 words with positive effect on odds of a 5 star review are: worried, Breads, plus, Almond Leaveners & Yeasts, excellently, find, grains, Computers, Features, hound. 
 
 The coefficient of discount is: 6.961539. This means that we expect log odds to increase by 6.961539 when the word discount is included in a review. 
-```{r xtable, results='asis'}
+```{r xtable, results='asis', echo=FALSE}
 
 # Fit a LASSO with all 142 product categories and 1125 words 
 
@@ -271,7 +271,7 @@ Run cross-validation to obtain the best lambda value that minimizes OOS deviance
 The lambda value that minimizes OOS deviance is 0.00137444. With that lambda, there are 974 non-zero coefficients. Using the 1se rule instead, there are only 831 non-zero coefficients (with a random seed of 250).
 
 
-```{r xtable data, results='asis'}
+```{r xtable data, results='asis', echo=FALSE}
 
 cv.fit <- cv.gamlr(x_cat2,
 				   y=Y,
