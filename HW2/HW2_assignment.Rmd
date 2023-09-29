@@ -73,7 +73,7 @@ pvals <- summary(pricey)$coef[-1,4]
 
 names(pvals)[pvals>.10]
 ```
-With only the significant covariates, the R^2 is 0.4471981. In comparison to the full model, there is a slight decrease in the R^2. 
+We drop BEDRMS and NUNITS, but do not drop the insignificant categorial levels. After this, the R^2 of the reduced model is 0.4471981. In comparison to the full model, there is a slight decrease in the R^2. ###Not sure if its helpful or neccessary to add the following: The shrinkage between the R^2 of the two models is .0001029.
 ```{r}
 #fit regression without non-significant variables
 pricey2 <- glm(log(LPRICE) ~ .-AMMORT -BEDRMS -NUNITS, data=homes) ##drop BEDRMS, NUNITS. leave ETRANSY, STATECO and STATECT since categorical levels.
