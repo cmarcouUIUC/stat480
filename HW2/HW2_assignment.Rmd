@@ -162,7 +162,7 @@ Y=0& \quad \text{for less than 5 stars}.
 
 Fit a LASSO model with only product categories. The start code prepares a sparse design matrix of 142 product categories. What is the in-sample R2 for the AICc slice of the LASSO path? Why did we use standardize FALSE?
 
-We can use standardize false because the x's are on the same scale already because they are all factor levels. not sure what is meant by r2 for aicc slice of lasso path.
+We can use standardize false because the x's are on the same scale already because they are all factor levels. not sure what is meant by r2 for aicc slice of lasso path. The in-sample R2 for the best lambda is 0.1048737.
 
 ```{r data, results='asis'}
 
@@ -214,6 +214,9 @@ lambda.min.ratio=1e-3)
 
 
 plot(lasso1)
+
+lasso1.summary <- summary(lasso1)
+lasso1.summary[ (lasso1.summary$aicc ==min(lasso1.summary$aicc)),] #selected the row with the min aic. idk if that's what she meant
 ```
 
 
@@ -265,7 +268,7 @@ coefmat['discount',]
 Continue with the model from Question 5.
 Run cross-validation to obtain the best lambda value that minimizes OOS deviance. How many coefficients are nonzero then? How many are nonzero under the 1se rule?  
 
-The lambda value that minimizes OOS deviance is 0.00137444. With that lambda, there are 974 non-zero coefficients. Using the 1se rule instead, there are only 811 non-zero coefficients.
+The lambda value that minimizes OOS deviance is 0.00137444. With that lambda, there are 974 non-zero coefficients. Using the 1se rule instead, there are only 831 non-zero coefficients (with a random seed of 250).
 (carrie I"m getting 
 [1] 0.00137444
 [1] 974
