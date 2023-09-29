@@ -105,6 +105,9 @@ summary(pricey3)
 
 pricey4 <- glm(homes$gt20dwn  ~ .-AMMORT -LPRICE + FRSTHO:BATHS ,data=homes, family=binomial)
 summary(pricey4)
+
+# - don't forget family="binomial"!
+# - use +A*B in forumula to add A interacting with B
 ```
 
 
@@ -126,13 +129,11 @@ ybar <- mean(log(homes$LPRICE[-subset]))
 D0 <- deviance(y=log(homes$LPRICE[-subset]), pred=ybar)
 
 subset_pricey <- glm(log(LPRICE) ~ .-AMMORT, data=homes[subset,])
+cor(subset_pricey$fitted,log(homes[subset,c("LPRICE")]))^2
 summary(subset_pricey)
 
 predictions <- predict(subset_pricey, homes[-subset,])
-
-# - don't forget family="binomial"!
-# - use +A*B in forumula to add A interacting with B
-####These hints seem odd to me since we didn't use interaction or family=binomial in problem #1 -charlie
+cor(predictions,log(homes[-subset,c("LPRICE")]))^2 #not sure I did this right?
 ```
 
 # Amazon Reviews
