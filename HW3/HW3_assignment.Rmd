@@ -100,21 +100,46 @@ We can see that degree is heavily left-skewed. A transformation to correct this 
 hist(degree)
 hist(log(degree+1))
 hist(sqrt(degree))
+##idk which looks better to you?
+d=log(degree+1)
 ```
 
 
 # Question 2
 
 Build a model to predict $d$ from $x$, our controls. Comment on how tight the fit is, and what that implies for estimation of a treatment effect.
+```{r}
+## how to get x?
+
+## might need to build design matrix
+
+# do LASSO of treatment on confounders
+
+treat <- gamlr(x,d,lambda.min.ratio=1e-4)
+```
 
 # Question 3
 
 Use predictions from Q2 in an estimator for effect of $d$ on loan.
 
+```{r}
+##Get predictions
+dhat <- predict(treat, x, type="response") 
+
+causal <- gamlr(cbind(d,dhat,x),y,free=2,lmr=1e-4)
+
+```
+
+
 # Question 4
 
 Compare the results from Q3 to those from a straight (naive) lasso
 for loan on $d$ and $x$. Explain why they are similar or different.
+
+```{r}
+naive <- gamlr(cbind(d,x),y)
+```
+
 
 # Question 5
 
