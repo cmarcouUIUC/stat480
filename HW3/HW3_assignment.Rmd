@@ -94,9 +94,12 @@ degree[is.na(degree)] <- 0 # unconnected houses, not in our graph
 I'd transform degree to create our treatment variable $d$.
 What would you do and why?
 
+We can see that degree is heavily left-skewed. A transformation to correct this might be a log or square root transformation.
 
 ```{r}
-summary(degree)
+hist(degree)
+hist(log(degree+1))
+hist(sqrt(degree))
 ```
 
 
