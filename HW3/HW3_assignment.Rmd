@@ -1,5 +1,6 @@
 ---
 title: "Homework 3 Assignment"
+author: "Carrie Mecca, Charlie Marcou, Jessie Bustin and Jasmine Zhang"
 fontsize: 10 pt
 output: 
     pdf_document:
@@ -92,6 +93,12 @@ degree[is.na(degree)] <- 0 # unconnected houses, not in our graph
 
 I'd transform degree to create our treatment variable $d$.
 What would you do and why?
+
+
+```{r}
+summary(degree)
+```
+
 
 # Question 2
 
