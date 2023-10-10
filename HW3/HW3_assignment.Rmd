@@ -101,6 +101,7 @@ hist(degree)
 hist(log(degree+1))
 hist(sqrt(degree))
 ##idk which looks better to you?
+#i think the log looks better - carrie
 d=log(degree+1)
 ```
 
@@ -108,14 +109,36 @@ d=log(degree+1)
 # Question 2
 
 Build a model to predict $d$ from $x$, our controls. Comment on how tight the fit is, and what that implies for estimation of a treatment effect.
-```{r}
-## how to get x?
 
-## might need to build design matrix
+```{r}
+library(gamlr)
+
+#is this what we're meant to do? factor all the categorical vars?
+controls = hh[,c(4:5)]
+v <- factor(hh$village)
+v <- factor(v, levels=c(NA,levels(v)), exclude=NULL)
+
+rl <- factor(hh$religion)
+rl <- factor(rl, levels=c(NA,levels(rl)), exclude=NULL)
+
+rf <- factor(hh$roof)
+rf <- factor(rf, levels=c(NA,levels(rf)), exclude=NULL)
+
+e <- factor(hh$electricity)
+e <- factor(e, levels=c(NA,levels(e)), exclude=NULL)
+
+o <- factor(hh$ownership)
+o <- factor(o, levels=c(NA,levels(o)), exclude=NULL)
+
+l <- factor(hh$leader)
+l <- factor(l, levels=c(NA,levels(l)), exclude=NULL)
+
+x = sparse.model.matrix(~ v + rl + rf + e + o + l, data=controls)[,-1]
+dim(x)
 
 # do LASSO of treatment on confounders
-
 treat <- gamlr(x,d,lambda.min.ratio=1e-4)
+summary(treat)
 ```
 
 # Question 3
@@ -124,10 +147,11 @@ Use predictions from Q2 in an estimator for effect of $d$ on loan.
 
 ```{r}
 ##Get predictions
+y <- hh$loan
 dhat <- predict(treat, x, type="response") 
-
 causal <- gamlr(cbind(d,dhat,x),y,free=2,lmr=1e-4)
-
+coef(causal)["d",]
+cor(drop(dhat),d)^2 #R^2
 ```
 
 
@@ -138,12 +162,39 @@ for loan on $d$ and $x$. Explain why they are similar or different.
 
 ```{r}
 naive <- gamlr(cbind(d,x),y)
+coef(naive)["d",]
 ```
 
 
 # Question 5
 
 Bootstrap your estimator from Q3 and describe the uncertainty.
+
+```{r}
+## BOOTSTRAP 
+n <- nrow(x)
+
+## Bootstrapping our lasso causal estimator is easy
+gamb <- c() # empty gamma
+
+for(b in 1:20){
+	## create a matrix of resampled indices
+	ib <- sample(1:n, n, replace=TRUE)
+
+	## create the resampled data
+	xb <- x[ib,]
+	db <- d[ib]
+	yb <- y[ib]
+
+	## run the treatment regression
+	treatb <- gamlr(xb,db,lambda.min.ratio=1e-3)
+	dhatb <- predict(treatb, xb, type="response")
+	fitb <- gamlr(cbind(db,dhatb,xb),yb,free=2)
+	gamb <- c(gamb,coef(fitb)["db",])
+}
+
+summary(gamb) 
+```
 
 # Bonus 
 
