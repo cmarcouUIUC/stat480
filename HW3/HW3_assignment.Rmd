@@ -108,6 +108,8 @@ d=log(degree+1)
 
 Build a model to predict $d$ from $x$, our controls. Comment on how tight the fit is, and what that implies for estimation of a treatment effect.
 
+We can see that the R2 is 0.06938527, which is not very large, which indicates the fit is not very good. This means that little of the treatment effect of degree on getting a loan is explained by the controls. #Is that right? Is there anything else to say on this one?
+
 ```{r}
 library(gamlr)
 
@@ -136,7 +138,10 @@ dim(x)
 
 # do LASSO of treatment on confounders
 treat <- gamlr(x,d,lambda.min.ratio=1e-4)
-summary(treat)
+##doing what we did in last hw to evaluate fit
+treat.summary=summary(treat)
+treat.summary[ (treat.summary$aicc ==min(treat.summary$aicc)),]
+
 ```
 
 # Question 3
