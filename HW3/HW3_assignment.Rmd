@@ -163,7 +163,7 @@ cor(drop(dhat),d)^2 #R^2
 Compare the results from Q3 to those from a straight (naive) lasso
 for loan on $d$ and $x$. Explain why they are similar or different.
 
-We can see that estimated treatments effects are very similar (.01616348 vs .01615451). This makes sense because we saw before that the R^2 between $d$ and $x$ is low. Since $d$ seems to move very independently from $x$, it make sense that the naive lasso has a similar estimated treatment effect as the double lasso. The double lasso helps remove the influence of $d_hat$ ##I think this is right, maybe there's more to add here, but does this intuitively make sense/ is anything missing? Or I guess is there anything else we should be comparing?
+We can see that estimated treatments effects are very similar (.01616348 vs .01615451). This makes sense because we saw before that the R^2 between $d$ and $x$ is low. Since $d$ seems to move very independently from $x$, it make sense that the naive lasso has a similar estimated treatment effect as the double lasso. The double lasso helps remove the influence of $d_hat$, but there wasn't much of an influence. ##I think this is right, maybe there's more to add here, but does this intuitively make sense/ is anything missing? Or I guess is there anything else we should be comparing?
 
 ```{r}
 naive <- gamlr(cbind(d,x),y)
@@ -173,7 +173,8 @@ coef(naive)["d",]
 
 # Question 5
 
-Bootstrap your estimator from Q3 and describe the uncertainty.
+Bootstrap your estimator from Q3 and describe the uncertainty. #Not sure what is meant by describe the uncertainty here. Tried to look at lecture notes and couldn't really tell. I guess we can say that the distribution is not very wide, so uncertainty is low?
+
 
 ```{r}
 ## BOOTSTRAP 
@@ -199,6 +200,7 @@ for(b in 1:20){
 }
 
 summary(gamb) 
+hist(gamb)
 ```
 
 # Bonus 
