@@ -108,7 +108,7 @@ d=log(degree+1)
 
 Build a model to predict $d$ from $x$, our controls. Comment on how tight the fit is, and what that implies for estimation of a treatment effect.
 
-We can see that the R2 is 0.06938527, which is not very large, which indicates the fit is not very good. This means that little of the treatment effect of degree on getting a loan is explained by the controls. #Is that right? Is there anything else to say on this one?
+We can see that the R^2 is 0.06938527, which is not very large, which indicates the fit is not very good. This means that little of the treatment effect of degree on getting a loan is explained by the controls. #Is that right? Is there anything else to say on this one?
 
 ```{r}
 library(gamlr)
@@ -162,6 +162,8 @@ cor(drop(dhat),d)^2 #R^2
 
 Compare the results from Q3 to those from a straight (naive) lasso
 for loan on $d$ and $x$. Explain why they are similar or different.
+
+We can see that estimated treatments effects are very similar (.01616348 vs .01615451). This makes sense because we saw before that the R^2 between $d$ and $x$ is low. Since $d$ seems to move very independently from $x$, it make sense that the naive lasso has a similar estimated treatment effect as the double lasso. ##I think this is right, maybe there's more to add here, but does this intuitively make sense/ is anything missing? Or I guess is there anything else we should be comparing?
 
 ```{r}
 naive <- gamlr(cbind(d,x),y)
