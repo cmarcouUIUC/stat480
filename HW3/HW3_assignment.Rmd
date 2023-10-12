@@ -94,14 +94,12 @@ degree[is.na(degree)] <- 0 # unconnected houses, not in our graph
 I'd transform degree to create our treatment variable $d$.
 What would you do and why?
 
-We can see that degree is heavily left-skewed. A transformation to correct this might be a log or square root transformation.
+We can see that degree is heavily left-skewed. A transformation to correct this might be a log or square root transformation. Because degree can take on the value of zero, we need to use a log(degree +1). When comparing histograms of the log and square root transformations, the log transformation seems to be more normally distributed so we will choose to use the log transformation.
 
 ```{r}
 hist(degree)
 hist(log(degree+1))
 hist(sqrt(degree))
-##idk which looks better to you?
-#i think the log looks better - carrie
 d=log(degree+1)
 ```
 
