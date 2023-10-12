@@ -208,3 +208,4 @@ hist(gamb)
 Can you think of how you'd design an experiment to estimate the treatment effect of network degree?
 
 
+You might randomly assign families to homes of varying degree but block by the control variables. Then we can observe what households seek loans. This randomizes treatment, so it is no longer just an observational study. 
