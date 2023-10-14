@@ -173,9 +173,9 @@ coef(naive)["d",]
 
 # Question 5
 
-Bootstrap your estimator from Q3 and describe the uncertainty. #Not sure what is meant by describe the uncertainty here. Tried to look at lecture notes and couldn't really tell. I guess we can say that the distribution is not very wide, so uncertainty is low?
+Bootstrap your estimator from Q3 and describe the uncertainty. 
 
-The standard error for this bootstrapped estimator is only 0.005092135, with a confidence interval from 0.005349029 to 0.02571757. Considering that the distribution is not wide, and, additionally, the standard error is small it indicates the uncertainty is low. 
+The standard error for this bootstrapped estimator is only 0.005092135, with a confidence interval from 0.005349029 to 0.02571757. Because the distribution is not wide, and we have a small standard error, the uncertainty of the e= Considering that the distribution is not wide, and, additionally, the standard error is small it indicates the uncertainty is low. 
 
 #something like this maybe with the std error?? idk
 
