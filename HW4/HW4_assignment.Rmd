@@ -126,12 +126,19 @@ BaconHanksPaths <- get.shortest.paths(actnet, from="Bacon, Kevin", to="Hanks, To
 V(actnet)$name[BaconHanksPaths$vpath[[1]]]
 #not sure what to describe here bc the edge length is one, and it's not like we can describe what movies they shared based on this. I guess we could pick a less common pair that hopefully have two edges to describe better.
 
+#visualizing, but it's too dense to see
+E(actnet)$width <- 2
+E(actnet)$color <- "grey"
+E(actnet, path=BaconHanksPaths$vpath[[1]])$color <- "green"
+plot(actnet)
 ```
 
 ## Question 4
 Find pairwise actor-cast association rules with at least 0.01% support and 10% confidence. Describe what you find.
 ```{r}
-
+##not in right format, will need to fix
+actorrules <- apriori(actnet, 
+	parameter=list(support=.01, confidence=.5, maxlen=3))
 ```
 
 ## Question 5
