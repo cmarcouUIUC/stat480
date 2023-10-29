@@ -136,14 +136,16 @@ plot(actnet)
 ## Question 4
 Find pairwise actor-cast association rules with at least 0.01% support and 10% confidence. Describe what you find.
 ```{r}
-##not in right format, will need to fix
-actorrules <- apriori(actnet, 
-	parameter=list(support=.01, confidence=.5, maxlen=3))
+actorrules <- apriori(casttrans, 
+	parameter=list(support=.01, confidence=.1, maxlen=2))
+inspect(actorrules)
+##got this code from lastfm.r but there are just no rules created??
+
 ```
 
 ## Question 5
 Let's zoom in at "Sheen, Martin". Build a regression model to predict his presence in a production from other actors' presences. Who are the top 5 actors that increase Martin Sheen's chance in a production? Compare your finding with the one from association rules? 
 ```{r}
-
+##are there any example building regression models even??
 ```
 
