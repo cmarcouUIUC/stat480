@@ -117,11 +117,26 @@ Who were the most common actors? Who were most connected? Pick a pair of actors 
 head(nroles[order(-nroles)], 5) #largest nroles
 
 distances(actnet, v=V(actnet)["Bacon, Kevin"], to=V(actnet)["Hanks, Tom"], weights=NA)#started shortest path
+
+#copied some of her code from her firenze example
+# All shortest paths
+all_shortest_paths(actnet, from="Bacon, Kevin", to="Hanks, Tom")
+# pick one
+BaconHanksPaths <- get.shortest.paths(actnet, from="Bacon, Kevin", to="Hanks, Tom")
+V(actnet)$name[BaconHanksPaths$vpath[[1]]]
+#not sure what to describe here bc the edge length is one, and it's not like we can describe what movies they shared based on this. I guess we could pick a less common pair that hopefully have two edges to describe better.
+
 ```
 
 ## Question 4
 Find pairwise actor-cast association rules with at least 0.01% support and 10% confidence. Describe what you find.
+```{r}
+
+```
 
 ## Question 5
 Let's zoom in at "Sheen, Martin". Build a regression model to predict his presence in a production from other actors' presences. Who are the top 5 actors that increase Martin Sheen's chance in a production? Compare your finding with the one from association rules? 
+```{r}
+
+```
 
