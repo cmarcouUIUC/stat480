@@ -136,10 +136,33 @@ plot(actnet)
 ## Question 4
 Find pairwise actor-cast association rules with at least 0.01% support and 10% confidence. Describe what you find.
 ```{r}
-actorrules <- apriori(casttrans, parameter=list(support=.01, confidence=.1, maxlen=2))
+actorrules <- apriori(casttrans, parameter=list(support=.0001, confidence=.1, maxlen=2))
 inspect(actorrules)
-##got this code from lastfm.r but there are just no rules created??
-##not sure what's going wrong here, I don't think I'm using the wrong input to this.
+
+##probably need to next extract rules as strings, change into edge matrix, 
+pairs <- labels(actorrules)
+pairs <- gsub("\\{|\\}","",pairs)
+pairs <- strsplit(pairs," => ")
+pairs <- do.call(rbind,pairs)
+pairs <- pairs[pairs[,1]!="",]
+
+rulenet <- graph.edgelist(pairs)
+rulenet <- as.undirected(rulenet)
+
+#plot(rulenet, vertex.label=NA, vertex.size=3, edge.curved=FALSE)
+
+
+## look at some measures of connectivity
+mbetween <- betweenness(rulenet)
+mdegree <- degree(rulenet)
+which.max(mbetween)
+which.max(mdegree)
+
+## and raw popularity
+#playcount <- table(lastfm$artist)[names(mdegree)]
+
+#plot(mdegree,mbetween,log="xy")
+#plot(as.numeric(playcount),mdegree,log="xy")
 ```
 
 ## Question 5
