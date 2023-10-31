@@ -149,7 +149,7 @@ pairs <- pairs[pairs[,1]!="",]
 rulenet <- graph.edgelist(pairs)
 rulenet <- as.undirected(rulenet)
 
-#plot(rulenet, vertex.label=NA, vertex.size=3, edge.curved=FALSE)
+plot(rulenet, vertex.label=NA, vertex.size=3, edge.curved=FALSE)
 
 
 ## look at some measures of connectivity
@@ -161,8 +161,10 @@ which.max(mdegree)
 ## and raw popularity
 #playcount <- table(lastfm$artist)[names(mdegree)]
 
-#plot(mdegree,mbetween,log="xy")
+plot(mdegree,mbetween,log="xy")
 #plot(as.numeric(playcount),mdegree,log="xy")
+
+##stuff with playcount, would be like actcount for us, but I don't think our stuff is in the same format as in her lastfm.R example. not sure we want to lose time trying to figure that out. 
 ```
 
 ## Question 5
