@@ -173,5 +173,11 @@ Let's zoom in at "Sheen, Martin". Build a regression model to predict his presen
 ##are there any example building regression models even?? from graphs i mean
 ##probably need to do something with actmat, not looking into it rn
 #we may need to ask on piazza because I can't figure out how to get this into the correct format ??
+##yeah, not sure, think we might need to ask on piazza and hope they are helpful.
+
+##comparing to Sheen Martin Association Rules by graphing neighbors
+nei <- graph.neighborhood(rulenet, 1, V(rulenet)["Sheen, Martin"])[[1]]
+plot(nei, edge.curved=FALSE)
+
 ```
 
