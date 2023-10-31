@@ -170,5 +170,6 @@ Let's zoom in at "Sheen, Martin". Build a regression model to predict his presen
 ```{r}
 ##are there any example building regression models even?? from graphs i mean
 ##probably need to do something with actmat, not looking into it rn
+#we may need to ask on piazza because I can't figure out how to get this into the correct format ??
 ```
 
