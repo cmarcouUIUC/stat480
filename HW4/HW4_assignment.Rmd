@@ -113,6 +113,9 @@ gsize(bacon3)
 ## Question 3
 Who were the most common actors? Who were most connected? Pick a pair of actors and describe the shortest path between them.
 
+We can see that the most common actors in the dataset are "Zivojinovic, Velimir 'Bata'", "Jeremy, Ron", "Doll, Dora", "Dobtcheff, Vernon",  and "Berléand, François". 
+
+##Describe shortest path between tom hanks/kevin bacon.
 ```{r}
 head(nroles[order(-nroles)], 5) #largest nroles
 
@@ -135,11 +138,13 @@ plot(actnet)
 
 ## Question 4
 Find pairwise actor-cast association rules with at least 0.01% support and 10% confidence. Describe what you find.
+
+We find 92,555 rules created. We can see that if we plot betweenness and degree, that these measures of connectivity seem to have a positive association with each other. ##idk how relevant that is to say. Dobtcheff, Vernon has the highest betweeness of all actors. Which indicates that he his frequently the shortest path between actors when using these actor-cast association rules. This high centrality makes sense considering that Dobtcheff was shown to be one of the most frequent actos in the dataset in Q3.  Meanwhile, Corrêa e Castro, Cláudio has the highest degree, which indicates he has the most rules relating to other actors. 
+
 ```{r}
 actorrules <- apriori(casttrans, parameter=list(support=.0001, confidence=.1, maxlen=2))
 inspect(actorrules)
 
-##probably need to next extract rules as strings, change into edge matrix, 
 pairs <- labels(actorrules)
 pairs <- gsub("\\{|\\}","",pairs)
 pairs <- strsplit(pairs," => ")
@@ -170,7 +175,9 @@ plot(mdegree,mbetween,log="xy")
 ## Question 5
 Let's zoom in at "Sheen, Martin". Build a regression model to predict his presence in a production from other actors' presences. Who are the top 5 actors that increase Martin Sheen's chance in a production? Compare your finding with the one from association rules? 
 
-Abraham Murray, Rick Warner, Sydney Penny, Marlee Martin and Matt Clark. #logit regression
+After fitting the LASSO regression model to predict Martin Sheen's presence in a movie, we find that the top 5 actors to increase his odds of participation are: Abraham Murray, Rick Warner, Sydney Penny, Marlee Martin and Matt Clark.
+
+We can compare this to the rules of association that we just created by graphing Martin Sheen's neighbors in the network of rules. We see that Abraham Murray, Rick Warner, Sydney Penny, Marlee Martin, and Matt Clark are all neighbors. Martin Sheen has more than just five neighbors that he is associated with who likely also are important predictors in the regression model.
 
 ```{r}
 target <- as.matrix(as.integer(actmat[,"Sheen, Martin"]))
@@ -187,6 +194,7 @@ head(nonzero_coeff[order(-nonzero_coeff),], 5)
 ##comparing to Sheen Martin Association Rules by graphing neighbors
 nei <- graph.neighborhood(rulenet, 1, V(rulenet)["Sheen, Martin"])[[1]]
 plot(nei, edge.curved=FALSE)
+
 
 ```
 
