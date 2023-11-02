@@ -169,11 +169,20 @@ plot(mdegree,mbetween,log="xy")
 
 ## Question 5
 Let's zoom in at "Sheen, Martin". Build a regression model to predict his presence in a production from other actors' presences. Who are the top 5 actors that increase Martin Sheen's chance in a production? Compare your finding with the one from association rules? 
+
+Abraham Murray, Rick Warner, Sydney Penny, Marlee Martin and Matt Clark. #logit regression
+
 ```{r}
-##are there any example building regression models even?? from graphs i mean
-##probably need to do something with actmat, not looking into it rn
-#we may need to ask on piazza because I can't figure out how to get this into the correct format ??
-##yeah, not sure, think we might need to ask on piazza and hope they are helpful.
+target <- as.matrix(as.integer(actmat[,"Sheen, Martin"]))
+predictors <- actmat[,!(colnames(actmat) %in% "Sheen, Martin")]
+
+set.seed(100)
+library(glmnet)
+logit.fit <- cv.glmnet(predictors,target, family="binomial")
+logit_coef <- coef(logit.fit, "lambda.min")
+nonzero<- which(logit_coef!=0,arr.ind=FALSE)
+nonzero_coeff<- as.matrix(logit_coef[nonzero,])
+head(nonzero_coeff[order(-nonzero_coeff),], 5)
 
 ##comparing to Sheen Martin Association Rules by graphing neighbors
 nei <- graph.neighborhood(rulenet, 1, V(rulenet)["Sheen, Martin"])[[1]]
