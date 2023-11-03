@@ -115,7 +115,8 @@ Who were the most common actors? Who were most connected? Pick a pair of actors 
 
 We can see that the most common actors in the dataset are "Zivojinovic, Velimir 'Bata'", "Jeremy, Ron", "Doll, Dora", "Dobtcheff, Vernon",  and "Berléand, François". 
 
-##Describe shortest path between tom hanks/kevin bacon.
+When we pick Tom Hanks, and Kevin Bacon. We can see that the length of shortest path is one. This indicates that there are movies that they both appeared in.
+
 ```{r}
 head(nroles[order(-nroles)], 5) #largest nroles
 
@@ -123,7 +124,7 @@ distances(actnet, v=V(actnet)["Bacon, Kevin"], to=V(actnet)["Hanks, Tom"], weigh
 
 #copied some of her code from her firenze example
 # All shortest paths
-all_shortest_paths(actnet, from="Bacon, Kevin", to="Hanks, Tom")
+#all_shortest_paths(actnet, from="Bacon, Kevin", to="Hanks, Tom")
 # pick one
 BaconHanksPaths <- get.shortest.paths(actnet, from="Bacon, Kevin", to="Hanks, Tom")
 V(actnet)$name[BaconHanksPaths$vpath[[1]]]
