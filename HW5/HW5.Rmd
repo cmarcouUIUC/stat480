@@ -1,0 +1,60 @@
+---
+title: "Homework 5 Assignment"
+author: "Charlie Marcou, Carrie Mecca, Jasmine Zhang, and Jessie Bustin"
+fontsize: 10 pt
+output: 
+    pdf_document:
+        fig_width: 6
+        fig_height: 4
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, 
+                      #include = TRUE, 
+                      fig.width = 6, fig.height = 4,
+                      warning = FALSE,
+                      message = FALSE,
+                      cache = TRUE,
+                      digits = 3,
+                      width = 48) 
+```
+
+We will use congress109 data in package textir. It counts for 1,000 phrases used by each of 529 members of the 109th US congress.
+```{r}
+library(textir) # to get the data
+
+library(maptpx) # for the topics function
+
+data(congress109) # load the data
+```
+
+The counts are in congress109counts. We also have congress109Ideology, a data.frame containing some information about each speaker. These includes some partisan metrics"
+
+party (Republican, Democrat, or Independent)
+repshare: share of constituents voting for Bush in 2004.
+Common Scores [cs1,cs2]: basically, the first two principal components of roll-call votes (next week!).
+
+## 1. Fit K-means to speech text for K in 5,10,15,20,25. Use an IC to choose the K and interpret the selected model.
+
+```{r}
+
+```
+
+
+## 2. Fit a topic model for the speech counts. Use Bayes factors to choose the number of topics, and interpret your chosen model.
+
+```{r}
+
+```
+
+
+## 3.  Connect the unsupervised clusters to partisanship.
+
+```{r}
+
+```
+
+
+I tabulate party membership by K-means cluster. Are there any non-partisan topics?
+I fit topic regressions for each of party and repshare. Compare to regression onto phrase percentages:
+x<-100*congress109Counts/rowSums(congress109Counts)
