@@ -152,11 +152,16 @@ rownames(tpcs$theta)[order(tpcs$theta[,2], decreasing=TRUE)[1:10]]
 
 ## 3.  Connect the unsupervised clusters to partisanship.
 
-```{r}
-
-```
-
-
 I tabulate party membership by K-means cluster. Are there any non-partisan topics?
 I fit topic regressions for each of party and repshare. Compare to regression onto phrase percentages:
 x<-100*congress109Counts/rowSums(congress109Counts)
+
+```{r}
+#regression on phrase percentages - idk if this what she's looking for. This whole question is poorly phrased
+library(gamlr)
+congressreg <- cv.gamlr(xcongress,as.factor(congress109Ideology$party),lambda.min.ratio=1e-5) 
+plot(congressreg)
+max(1-congressreg$cvm/congressreg$cvm[1]) # OOS R2 around 0.218
+```
+
+
