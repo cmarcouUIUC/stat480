@@ -36,6 +36,32 @@ Common Scores [cs1,cs2]: basically, the first two principal components of roll-c
 
 ## 1. Fit K-means to speech text for K in 5,10,15,20,25. Use an IC to choose the K and interpret the selected model.
 
+Both agree on 5 as the optimal number of clusters.
+
+```{r}
+xcongress <- scale(as.matrix( congress109Counts/rowSums(congress109Counts) )) #do we need to do this or just scale?
+#xcongress <- scale(congress109Counts)
+
+k_list <-5*(1:5)
+kfit <- lapply(k_list, function(k) kmeans(xcongress,k))
+
+source("kIC.R") ## utility script
+kaicc <- sapply(kfit,kIC)
+kbic <- sapply(kfit,kIC,"B")
+
+## plot 'em
+plot(y=kaicc, x=k_list, xlab="K", ylab="IC", 
+	ylim=range(c(kaicc,kbic)),
+	bty="n", type="l", lwd=2)
+
+abline(v=k_list[which.min(kaicc)], col=4)
+abline(v=k_list[which.min(kbic)],col=3)
+
+paste0('AIC Optimal k: ', k_list[which.min(kaicc)])
+paste0('BIC Optimal k: ',k_list[which.min(kbic)])
+```
+#i think this works charlie? she didn't account for the index and actual k value in the list not being the same...
+
 ```{r}
 ##things look weird below, mostly copying from wine.r here, but might be goofing something.
 
