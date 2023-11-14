@@ -36,11 +36,12 @@ Common Scores [cs1,cs2]: basically, the first two principal components of roll-c
 
 ## 1. Fit K-means to speech text for K in 5,10,15,20,25. Use an IC to choose the K and interpret the selected model.
 
-Both agree on 5 as the optimal number of clusters.
+Both agree on 5 as the optimal number of clusters. ##isn't this 25 due to the weird indexing?
 
 ```{r}
 xcongress <- scale(as.matrix( congress109Counts/rowSums(congress109Counts) )) #do we need to do this or just scale?
 #xcongress <- scale(congress109Counts)
+##idk, i think it's the difference between normalizing + standardizing vs just standardizing? In the we8there example she does what I did above, in the wine example, she does just scaling but then does an apply where she sets the sd and mean? it's a little confusing.
 
 k_list <-5*(1:5)
 kfit <- lapply(k_list, function(k) kmeans(xcongress,k))
@@ -59,8 +60,15 @@ abline(v=k_list[which.min(kbic)],col=3)
 
 paste0('AIC Optimal k: ', k_list[which.min(kaicc)])
 paste0('BIC Optimal k: ',k_list[which.min(kbic)])
+
+##Get r^2
+k=5
+paste0('R^2: ',1 - sum(kfit[[k]]$tot.withinss)/kfit[[k]]$totss)
+
+##not sure what else to interpret outside of r^2 (which i think is weird to look at? but she does it in an example, would make more sense to compare reduction in SSE or something like that i think?), we could look at cluster means I guess.
 ```
 #i think this works charlie? she didn't account for the index and actual k value in the list not being the same...
+
 
 ```{r}
 ##things look weird below, mostly copying from wine.r here, but might be goofing something.
@@ -100,6 +108,7 @@ abline(v=which.min(kbic),col=4)
 
 ## 2. Fit a topic model for the speech counts. Use Bayes factors to choose the number of topics, and interpret your chosen model.
 
+Using Bayes factors we select the topic model with 10 topics. We can visualize these topics by examining word clouds of the most probable words within each topic. ##expand on interpretation maybe idk.
 ```{r}
 ##Basically, I have just pasted in all her stuff, here, will need to check what # of topics to choose later.
 
@@ -121,7 +130,7 @@ dim(tpc$theta)
 colSums(tpc$theta)
 
 dim(tpc$omega)
-rowSums(tpc$omega)
+#rowSums(tpc$omega)
 
 ## choosing the number of topics
 ## If you supply a vector of topic sizes, it uses a Bayes factor to choose
@@ -144,9 +153,47 @@ summary(tpcs, n=10)
 ## and each column is a topic
 ## we can use these to rank terms by probability within topics
 
-rownames(tpcs$theta)[order(tpcs$theta[,1], decreasing=TRUE)[1:10]]
+#rownames(tpcs$theta)[order(tpcs$theta[,1], decreasing=TRUE)[1:10]]
 
-rownames(tpcs$theta)[order(tpcs$theta[,2], decreasing=TRUE)[1:10]]
+#rownames(tpcs$theta)[order(tpcs$theta[,2], decreasing=TRUE)[1:10]]
+
+library(wordcloud)
+
+## we'll size the word proportional to its in-topic probability
+## and only show those with > 0.004 omega
+## (it will still likely warn that it couldn't fit everything)
+
+par(mfrow=c(1,2))
+
+wordcloud(row.names(tpcs$theta), 
+	freq=tpcs$theta[,1], min.freq=0.004, col="maroon")
+
+wordcloud(row.names(tpcs$theta), 
+	freq=tpcs$theta[,2], min.freq=0.004, col="navy")
+
+wordcloud(row.names(tpcs$theta), 
+	freq=tpcs$theta[,3], min.freq=0.004, col="black")
+
+wordcloud(row.names(tpcs$theta), 
+	freq=tpcs$theta[,4], min.freq=0.004, col="green")
+
+wordcloud(row.names(tpcs$theta), 
+	freq=tpcs$theta[,5], min.freq=0.004, col="blue")
+
+wordcloud(row.names(tpcs$theta), 
+	freq=tpcs$theta[,6], min.freq=0.004, col="navy")
+
+wordcloud(row.names(tpcs$theta), 
+	freq=tpcs$theta[,7], min.freq=0.004, col="navy")
+
+wordcloud(row.names(tpcs$theta), 
+	freq=tpcs$theta[,8], min.freq=0.004, col="navy")
+
+wordcloud(row.names(tpcs$theta), 
+	freq=tpcs$theta[,9], min.freq=0.004, col="navy")
+
+wordcloud(row.names(tpcs$theta), 
+	freq=tpcs$theta[,10], min.freq=0.004, col="navy")
 ```
 
 
@@ -158,10 +205,28 @@ x<-100*congress109Counts/rowSums(congress109Counts)
 
 ```{r}
 #regression on phrase percentages - idk if this what she's looking for. This whole question is poorly phrased
+
+##I believe we need to build a regression predicting party by using the k-means clusters we generated. Similar to wine.r
+##My question is if she also wanted us to fit topic regressions like she says in the text? for that we could refer to we9there.r
+##What exactly is repshare?? 
+
+##tabulating topic by party
+t<-table(congress109Ideology$party,kfit[[k]]$cluster)
+t
+##topic 2,6,7,9,23,25 seem to be highly partisan
+##topic 1,5,8,17,22 seem to be bi-partisan
+
 library(gamlr)
 congressreg <- cv.gamlr(xcongress,as.factor(congress109Ideology$party),lambda.min.ratio=1e-5) 
 plot(congressreg)
-max(1-congressreg$cvm/congressreg$cvm[1]) # OOS R2 around 0.218
+paste0('oos r^2: ',max(1-congressreg$cvm/congressreg$cvm[1])) # OOS R2 around 0.218
+
+#predicting party from cluster. 
+xclust <- sparse.model.matrix(~factor(kfit[[k]]$cluster)) # cluster membership matrix
+congressregclust <- cv.gamlr(xclust,as.factor(congress109Ideology$party),lambda.min.ratio=1e-5) # 
+plot(congressregclust)
+paste0('oos r^2: ',max(1-congressregclust$cvm/congressregclust$cvm[1])) # OOS R2 around 0.286
+
 ```
 
 
