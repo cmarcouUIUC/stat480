@@ -36,7 +36,7 @@ Common Scores [cs1,cs2]: basically, the first two principal components of roll-c
 
 ## 1. Fit K-means to speech text for K in 5,10,15,20,25. Use an IC to choose the K and interpret the selected model.
 
-Both agree on 5 as the optimal number of clusters. ##isn't this 25 due to the weird indexing?
+Both agree on 5 as the optimal number of clusters. ##isn't this 25 due to the weird indexing? #no because I fixed the indexing in my code it's position 1 which equals five clusters
 
 ```{r}
 xcongress <- scale(as.matrix( congress109Counts/rowSums(congress109Counts) )) #do we need to do this or just scale?
