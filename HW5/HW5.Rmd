@@ -229,4 +229,46 @@ paste0('oos r^2: ',max(1-congressregclust$cvm/congressregclust$cvm[1])) # OOS R2
 
 ```
 
+#this possibly repeated for both party and repshare? - based on the we8there code
+
+```{r}
+#regress party against topic
+party <- congress109Ideology[,"party"]
+regtopics.cv <- cv.gamlr(tpcs$omega, party,lambda.min.ratio=10^{-4})
+
+## give it the word %s as inputs
+x <- 100*congress109Counts/rowSums(congress109Counts)
+regwords.cv <- cv.gamlr(x, party)
+
+par(mfrow=c(1,2))
+plot(regtopics.cv)
+mtext("topic regression", font=2, line=2)
+plot(regwords.cv)
+mtext("bigram regression", font=2, line=2)
+
+# min OOS MSE
+min(regtopics.cv$cvm)
+min(regwords.cv$cvm)
+```
+
+```{r}
+#regress repshare against topic
+repshare <- congress109Ideology[,"repshare"]
+regtopics.cv.2 <- cv.gamlr(tpcs$omega, repshare,lambda.min.ratio=10^{-4})
+
+## give it the word %s as inputs
+regwords.cv.2 <- cv.gamlr(x, repshare)
+
+par(mfrow=c(1,2))
+plot(regtopics.cv.2)
+mtext("topic regression", font=2, line=2)
+plot(regwords.cv_2)
+mtext("bigram regression", font=2, line=2)
+
+# min OOS MSE
+min(regtopics.cv.2$cvm)
+min(regwords.cv.2$cvm)
+```
+
+
 
