@@ -36,12 +36,11 @@ Common Scores [cs1,cs2]: basically, the first two principal components of roll-c
 
 ## 1. Fit K-means to speech text for K in 5,10,15,20,25. Use an IC to choose the K and interpret the selected model.
 
-Both agree on 5 as the optimal number of clusters. ##isn't this 25 due to the weird indexing? #no because I fixed the indexing in my code it's position 1 which equals five clusters
+
+Based on both AIC and BIC, the optimal K is 5. This means that the simplest model was chosen. However, the R^2 for the model is low, .0351, indicating that only approximately 3.5% of the deviance in x is being explained.
 
 ```{r}
-xcongress <- scale(as.matrix( congress109Counts/rowSums(congress109Counts) )) #do we need to do this or just scale?
-#xcongress <- scale(congress109Counts)
-##idk, i think it's the difference between normalizing + standardizing vs just standardizing? In the we8there example she does what I did above, in the wine example, she does just scaling but then does an apply where she sets the sd and mean? it's a little confusing.
+xcongress <- scale(as.matrix( congress109Counts/rowSums(congress109Counts) )) 
 
 k_list <-5*(1:5)
 kfit <- lapply(k_list, function(k) kmeans(xcongress,k))
@@ -62,49 +61,10 @@ paste0('AIC Optimal k: ', k_list[which.min(kaicc)])
 paste0('BIC Optimal k: ',k_list[which.min(kbic)])
 
 ##Get r^2
-k=5
-paste0('R^2: ',1 - sum(kfit[[k]]$tot.withinss)/kfit[[k]]$totss)
-
-##not sure what else to interpret outside of r^2 (which i think is weird to look at? but she does it in an example, would make more sense to compare reduction in SSE or something like that i think?), we could look at cluster means I guess.
-```
-#i think this works charlie? she didn't account for the index and actual k value in the list not being the same...
-
-
-```{r}
-##things look weird below, mostly copying from wine.r here, but might be goofing something.
-
-
-#normalize by length
-fs <- scale(as.matrix( congress109Counts/rowSums(congress109Counts) ))
-
-kfit <- lapply(5*(1:5), function(k) kmeans(fs,k))
-
-# choose number of clusters?
-
-source("kIC.R") ## utility script
-
-# you give it kmeans fit, 
-# then "A" for AICc (default) or "B" for BIC
-
-kaicc <- sapply(kfit,kIC)
-
-kbic <- sapply(kfit,kIC,"B")
-
-## plot 'em
-
-plot(kaicc, xlab="K", ylab="IC", 
-	ylim=range(c(kaicc,kbic)), # get them on same page
-	bty="n", type="l", lwd=2)
-
-abline(v=which.min(kaicc))
-
-lines(kbic, col=4, lwd=2)
-
-abline(v=which.min(kbic),col=4)
-
+k_index=1
+paste0('R^2: ',1 - sum(kfit[[k_index]]$tot.withinss)/kfit[[k_index]]$totss)
 
 ```
-
 
 ## 2. Fit a topic model for the speech counts. Use Bayes factors to choose the number of topics, and interpret your chosen model.
 
@@ -209,34 +169,12 @@ We then fit topic regressions for party and repshare. We can see that the MSE fo
 
 
 ```{r}
-#regression on phrase percentages - idk if this what she's looking for. This whole question is poorly phrased
-
-##I believe we need to build a regression predicting party by using the k-means clusters we generated. Similar to wine.r
-##My question is if she also wanted us to fit topic regressions like she says in the text? for that we could refer to we9there.r
-##What exactly is repshare?? 
-
 ##tabulating topic by party
-t<-table(congress109Ideology$party,kfit[[k]]$cluster)
+t<-table(congress109Ideology$party,kfit[[k_index]]$cluster)
 t
 ##topic 2,6,7,9,23,25 seem to be highly partisan
 ##topic 1,5,8,17,22 seem to be bi-partisan
 
-#library(gamlr)
-#congressreg <- cv.gamlr(xcongress,as.factor(congress109Ideology$party),lambda.min.ratio=1e-5) 
-#plot(congressreg)
-#paste0('oos r^2: ',max(1-congressreg$cvm/congressreg$cvm[1])) # OOS R2 around 0.218
-
-#predicting party from cluster. 
-#xclust <- sparse.model.matrix(~factor(kfit[[k]]$cluster)) # cluster membership matrix
-#congressregclust <- cv.gamlr(xclust,as.factor(congress109Ideology$party),lambda.min.ratio=1e-5) # 
-#plot(congressregclust)
-#paste0('oos r^2: ',max(1-congressregclust$cvm/congressregclust$cvm[1])) # OOS R2 around 0.286
-
-```
-
-#this possibly repeated for both party and repshare? - based on the we8there code
-
-```{r}
 #regress party against topic
 party <- congress109Ideology[,"party"]
 regtopics.cv <- cv.gamlr(tpcs$omega, party,lambda.min.ratio=10^{-4})
@@ -254,9 +192,7 @@ mtext("bigram regression", font=2, line=2)
 # min OOS MSE
 min(regtopics.cv$cvm)
 min(regwords.cv$cvm)
-```
 
-```{r}
 #regress repshare against topic
 repshare <- congress109Ideology[,"repshare"]
 regtopics.cv.2 <- cv.gamlr(tpcs$omega, repshare,lambda.min.ratio=10^{-4})
