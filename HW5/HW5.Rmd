@@ -203,6 +203,11 @@ I tabulate party membership by K-means cluster. Are there any non-partisan topic
 I fit topic regressions for each of party and repshare. Compare to regression onto phrase percentages:
 x<-100*congress109Counts/rowSums(congress109Counts)
 
+We tabulated party membership by K-means cluster. We can see based on the table, topics 2,6,7,9,23, and 25 are partisan, being discussed far more by one party than the other. Topics 1,5,8,17, and 22 seem to be more bi-partisan and are discussed frequently by both parties. The other topics seem to be discussed less frequently and are bi partisan. 
+
+We then fit topic regressions for party and repshare. We can see that the MSE for both topic regressions and repshare is lower for the topic models compared to models fit with phrase percentages. The topic models have a better performance.
+
+
 ```{r}
 #regression on phrase percentages - idk if this what she's looking for. This whole question is poorly phrased
 
@@ -216,16 +221,16 @@ t
 ##topic 2,6,7,9,23,25 seem to be highly partisan
 ##topic 1,5,8,17,22 seem to be bi-partisan
 
-library(gamlr)
-congressreg <- cv.gamlr(xcongress,as.factor(congress109Ideology$party),lambda.min.ratio=1e-5) 
-plot(congressreg)
-paste0('oos r^2: ',max(1-congressreg$cvm/congressreg$cvm[1])) # OOS R2 around 0.218
+#library(gamlr)
+#congressreg <- cv.gamlr(xcongress,as.factor(congress109Ideology$party),lambda.min.ratio=1e-5) 
+#plot(congressreg)
+#paste0('oos r^2: ',max(1-congressreg$cvm/congressreg$cvm[1])) # OOS R2 around 0.218
 
 #predicting party from cluster. 
-xclust <- sparse.model.matrix(~factor(kfit[[k]]$cluster)) # cluster membership matrix
-congressregclust <- cv.gamlr(xclust,as.factor(congress109Ideology$party),lambda.min.ratio=1e-5) # 
-plot(congressregclust)
-paste0('oos r^2: ',max(1-congressregclust$cvm/congressregclust$cvm[1])) # OOS R2 around 0.286
+#xclust <- sparse.model.matrix(~factor(kfit[[k]]$cluster)) # cluster membership matrix
+#congressregclust <- cv.gamlr(xclust,as.factor(congress109Ideology$party),lambda.min.ratio=1e-5) # 
+#plot(congressregclust)
+#paste0('oos r^2: ',max(1-congressregclust$cvm/congressregclust$cvm[1])) # OOS R2 around 0.286
 
 ```
 
