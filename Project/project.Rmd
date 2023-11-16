@@ -14,3 +14,11 @@ library(readr)
 drugsComTrain_raw <- read_delim("GitHub/stat480/Project/drugsComTrain_raw.tsv", delim = "\t", escape_double = FALSE,  trim_ws = TRUE)
 ```
 
+step 1 is to probably create word matrix
+
+ok some ideas
+--build topic model and or cluster words
+--predict rating / review usefulness from words/bigrams/phrases
+--if we do do a prediction compare straight glm/fdr analysis with lasso
+--perhaps do a double lasso controlling for other variables like date/condition/review/usefulness.
+
