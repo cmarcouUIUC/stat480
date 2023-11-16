@@ -36,12 +36,11 @@ Common Scores [cs1,cs2]: basically, the first two principal components of roll-c
 
 ## 1. Fit K-means to speech text for K in 5,10,15,20,25. Use an IC to choose the K and interpret the selected model.
 
-Both agree on 5 as the optimal number of clusters. ##isn't this 25 due to the weird indexing? #no because I fixed the indexing in my code it's position 1 which equals five clusters
+
+Based on both AIC and BIC, the optimal K is 5. This means that the simplest model was chosen. However, the R^2 for the model is low, .02987, indicating that only approximately 3% of the deviance in x is being explained.
 
 ```{r}
-xcongress <- scale(as.matrix( congress109Counts/rowSums(congress109Counts) )) #do we need to do this or just scale?
-#xcongress <- scale(congress109Counts)
-##idk, i think it's the difference between normalizing + standardizing vs just standardizing? In the we8there example she does what I did above, in the wine example, she does just scaling but then does an apply where she sets the sd and mean? it's a little confusing.
+xcongress <- scale(as.matrix( congress109Counts/rowSums(congress109Counts) )) 
 
 k_list <-5*(1:5)
 kfit <- lapply(k_list, function(k) kmeans(xcongress,k))
@@ -62,13 +61,10 @@ paste0('AIC Optimal k: ', k_list[which.min(kaicc)])
 paste0('BIC Optimal k: ',k_list[which.min(kbic)])
 
 ##Get r^2
-k=5
-paste0('R^2: ',1 - sum(kfit[[k]]$tot.withinss)/kfit[[k]]$totss)
+k_index=1
+paste0('R^2: ',1 - sum(kfit[[k_index]]$tot.withinss)/kfit[[k_index]]$totss)
 
-##not sure what else to interpret outside of r^2 (which i think is weird to look at? but she does it in an example, would make more sense to compare reduction in SSE or something like that i think?), we could look at cluster means I guess.
 ```
-#i think this works charlie? she didn't account for the index and actual k value in the list not being the same...
-
 
 ```{r}
 ##things look weird below, mostly copying from wine.r here, but might be goofing something.
