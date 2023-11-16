@@ -66,42 +66,6 @@ paste0('R^2: ',1 - sum(kfit[[k_index]]$tot.withinss)/kfit[[k_index]]$totss)
 
 ```
 
-```{r}
-##things look weird below, mostly copying from wine.r here, but might be goofing something.
-
-
-#normalize by length
-fs <- scale(as.matrix( congress109Counts/rowSums(congress109Counts) ))
-
-kfit <- lapply(5*(1:5), function(k) kmeans(fs,k))
-
-# choose number of clusters?
-
-source("kIC.R") ## utility script
-
-# you give it kmeans fit, 
-# then "A" for AICc (default) or "B" for BIC
-
-kaicc <- sapply(kfit,kIC)
-
-kbic <- sapply(kfit,kIC,"B")
-
-## plot 'em
-
-plot(kaicc, xlab="K", ylab="IC", 
-	ylim=range(c(kaicc,kbic)), # get them on same page
-	bty="n", type="l", lwd=2)
-
-abline(v=which.min(kaicc))
-
-lines(kbic, col=4, lwd=2)
-
-abline(v=which.min(kbic),col=4)
-
-
-```
-
-
 ## 2. Fit a topic model for the speech counts. Use Bayes factors to choose the number of topics, and interpret your chosen model.
 
 Using Bayes factors we select the topic model with 10 topics. We can visualize these topics by examining word clouds of the most probable words within each topic. ##expand on interpretation maybe idk.
