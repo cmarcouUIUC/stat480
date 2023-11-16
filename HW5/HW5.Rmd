@@ -163,10 +163,9 @@ I tabulate party membership by K-means cluster. Are there any non-partisan topic
 I fit topic regressions for each of party and repshare. Compare to regression onto phrase percentages:
 x<-100*congress109Counts/rowSums(congress109Counts)
 
-We tabulated party membership by K-means cluster. We can see based on the table, topics 2,6,7,9,23, and 25 are partisan, being discussed far more by one party than the other. Topics 1,5,8,17, and 22 seem to be more bi-partisan and are discussed frequently by both parties. The other topics seem to be discussed less frequently and are bi partisan. 
+We tabulated party membership by K-means cluster. We can see based on the table, clusters 2,3 and 4 are partisan, containing far more members one party than the other. Clusters 1 and 5 seem to be more bi-partisan and contain a more diverse group of party members. 
 
 We then fit topic regressions for party and repshare. We can see that the MSE for both topic regressions and repshare is lower for the topic models compared to models fit with phrase percentages. The topic models have a better performance.
-
 
 ```{r}
 ##tabulating topic by party
