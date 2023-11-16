@@ -37,7 +37,7 @@ Common Scores [cs1,cs2]: basically, the first two principal components of roll-c
 ## 1. Fit K-means to speech text for K in 5,10,15,20,25. Use an IC to choose the K and interpret the selected model.
 
 
-Based on both AIC and BIC, the optimal K is 5. This means that the simplest model was chosen. However, the R^2 for the model is low, .02987, indicating that only approximately 3% of the deviance in x is being explained.
+Based on both AIC and BIC, the optimal K is 5. This means that the simplest model was chosen. However, the R^2 for the model is low, .0351, indicating that only approximately 3.5% of the deviance in x is being explained.
 
 ```{r}
 xcongress <- scale(as.matrix( congress109Counts/rowSums(congress109Counts) )) 
@@ -169,34 +169,12 @@ We then fit topic regressions for party and repshare. We can see that the MSE fo
 
 
 ```{r}
-#regression on phrase percentages - idk if this what she's looking for. This whole question is poorly phrased
-
-##I believe we need to build a regression predicting party by using the k-means clusters we generated. Similar to wine.r
-##My question is if she also wanted us to fit topic regressions like she says in the text? for that we could refer to we9there.r
-##What exactly is repshare?? 
-
 ##tabulating topic by party
-t<-table(congress109Ideology$party,kfit[[k]]$cluster)
+t<-table(congress109Ideology$party,kfit[[k_index]]$cluster)
 t
 ##topic 2,6,7,9,23,25 seem to be highly partisan
 ##topic 1,5,8,17,22 seem to be bi-partisan
 
-#library(gamlr)
-#congressreg <- cv.gamlr(xcongress,as.factor(congress109Ideology$party),lambda.min.ratio=1e-5) 
-#plot(congressreg)
-#paste0('oos r^2: ',max(1-congressreg$cvm/congressreg$cvm[1])) # OOS R2 around 0.218
-
-#predicting party from cluster. 
-#xclust <- sparse.model.matrix(~factor(kfit[[k]]$cluster)) # cluster membership matrix
-#congressregclust <- cv.gamlr(xclust,as.factor(congress109Ideology$party),lambda.min.ratio=1e-5) # 
-#plot(congressregclust)
-#paste0('oos r^2: ',max(1-congressregclust$cvm/congressregclust$cvm[1])) # OOS R2 around 0.286
-
-```
-
-#this possibly repeated for both party and repshare? - based on the we8there code
-
-```{r}
 #regress party against topic
 party <- congress109Ideology[,"party"]
 regtopics.cv <- cv.gamlr(tpcs$omega, party,lambda.min.ratio=10^{-4})
@@ -214,9 +192,7 @@ mtext("bigram regression", font=2, line=2)
 # min OOS MSE
 min(regtopics.cv$cvm)
 min(regwords.cv$cvm)
-```
 
-```{r}
 #regress repshare against topic
 repshare <- congress109Ideology[,"repshare"]
 regtopics.cv.2 <- cv.gamlr(tpcs$omega, repshare,lambda.min.ratio=10^{-4})
