@@ -68,23 +68,19 @@ paste0('R^2: ',1 - sum(kfit[[k_index]]$tot.withinss)/kfit[[k_index]]$totss)
 
 ## 2. Fit a topic model for the speech counts. Use Bayes factors to choose the number of topics, and interpret your chosen model.
 
-Using Bayes factors we select the topic model with 10 topics. We can visualize these topics by examining word clouds of the most probable words within each topic. ##expand on interpretation maybe idk.
-```{r}
-##Basically, I have just pasted in all her stuff, here, will need to check what # of topics to choose later.
+Using Bayes factors we select the topic model with 10 topics. We can visualize these topics by examining word clouds of the most probable words within each topic. 
 
+```{r}
 ## topic modelling.  Treat counts as actual counts!
 ## i.e., model them with a multinomial
 ## we'll use the topics function in maptpx (there are other options out there)
 
 ## you need to convert from a Matrix to a `slam' simple_triplet_matrix
 ## luckily, this is easy.
-
 x <- as.simple_triplet_matrix(congress109Counts)
 
 # to fit, just give it the counts, number of `topics' K, and any other args
-
 tpc <- topics(x,K=10) 
-
 
 dim(tpc$theta)
 colSums(tpc$theta)
@@ -102,12 +98,11 @@ tpcs <- topics(x,K=5*(1:5), verb=10) # it chooses 10 topics
 ## interpretation
 # summary prints the top `n' words for each topic,
 # under ordering by `topic over aggregate' lift:
-#    the topic word prob over marginal word prob.
+#the topic word prob over marginal word prob.
 
 summary(tpcs, n=10) 
 
 # this will promote rare words that with high in-topic prob
-
 # alternatively, you can look at words ordered by simple in-topic prob
 ## the topic-term probability matrix is called 'theta', 
 ## and each column is a topic
@@ -163,7 +158,7 @@ I tabulate party membership by K-means cluster. Are there any non-partisan topic
 I fit topic regressions for each of party and repshare. Compare to regression onto phrase percentages:
 x<-100*congress109Counts/rowSums(congress109Counts)
 
-We tabulated party membership by K-means cluster. We can see based on the table, clusters 2,3 and 4 are partisan, containing far more members one party than the other. Clusters 1 and 5 seem to be more bi-partisan and contain a more diverse group of party members. 
+We tabulated party membership by K-means cluster. We can see based on the table, clusters 2,3 and 4 are partisan, containing far more members of one party than the other. Clusters 1 and 5 seem to be more bi-partisan and contain a more diverse group of party members. 
 
 We then fit topic regressions for party and repshare. We can see that the MSE for both topic regressions and repshare is lower for the topic models compared to models fit with phrase percentages. The topic models have a better performance.
 
