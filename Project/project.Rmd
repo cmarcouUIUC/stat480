@@ -92,6 +92,13 @@ k_index= k_list[which.min(kaicc)]
 paste0('R^2: ',1 - sum(kfit[[k_index]]$tot.withinss)/kfit[[k_index]]$totss)
 ```
 
+```{r cluster reg}
+xclust <- sparse.model.matrix(~factor(kfit[[k]]$cluster)+##wine$color) # cluster membership matrix
+regclust <- cv.gamlr(xclust,###wine$quality,lambda.min.ratio=1e-5) # 
+plot(regclust)
+max(1-regclust$cvm/regclust$cvm[1]) # OOS R2 around 0.22
+```
+
 
 step 1 is to probably create word matrix
 
