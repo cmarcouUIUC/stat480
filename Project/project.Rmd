@@ -33,6 +33,36 @@ head(dtm)
 inspect(dtm[1:5, 1000:1005])
 ```
 
+```{r clustering}
+xdtm<-scale(dtm.new)
+k_list <-(1:20)
+kfit <- lapply(k_list, function(k) kmeans(xdtm,k))
+
+source("kIC.R") ## utility script
+kaicc <- sapply(kfit,kIC)
+kbic <- sapply(kfit,kIC,"B")
+
+## plot 'em
+plot(y=kaicc, x=k_list, xlab="K", ylab="IC", 
+	ylim=range(c(kaicc,kbic)),
+	bty="n", type="l", lwd=2)
+lines(y=kbic, x=k_list, xlab="K", ylab="IC", 
+	ylim=range(c(kaicc,kbic)),
+	bty="n", type="l", lwd=2, col='red')
+
+abline(v=k_list[which.min(kaicc)], col=4)
+abline(v=k_list[which.min(kbic)],col=3)
+
+paste0('AIC Optimal k: ', k_list[which.min(kaicc)])
+paste0('BIC Optimal k: ',k_list[which.min(kbic)])
+
+
+##Get r^2
+k_index= k_list[which.min(kaicc)]
+paste0('R^2: ',1 - sum(kfit[[k_index]]$tot.withinss)/kfit[[k_index]]$totss)
+```
+
+
 step 1 is to probably create word matrix
 
 ok some ideas
