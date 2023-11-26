@@ -15,7 +15,19 @@ drugsComTrain_raw <- read_delim("drugsComTrain_raw.tsv", delim = "\t", escape_do
 ```
 
 ```{r}
+library(tm)
+dtm <- DocumentTermMatrix(drugsComTrain_raw$review,
+                          control = list(stopwords = TRUE, 
+                                         removeNumbers = TRUE,
+                                         removePunctuation = TRUE,
+                                         stemming = TRUE))
 
+```
+
+```{r}
+#look at matrix
+head(dtm)
+inspect(dtm[1:5, 1000:1005])
 ```
 
 step 1 is to probably create word matrix
