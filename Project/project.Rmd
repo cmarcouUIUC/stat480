@@ -29,14 +29,14 @@ dtm.new   <- dtm[rowTotals> 0, ]           #remove all docs without words
 
 ```{r}
 #look at matrix
-head(dtm)
-inspect(dtm[1:5, 1000:1005])
+head(dtm.new)
+inspect(dtm.new[1:5, 1000:1005])
 ```
 
 ```{r}
 #topic modeling
 library(maptpx)
-x <- as.simple_triplet_matrix(dtm_2)
+x <- as.simple_triplet_matrix(dtm.new)
 
 tpcs <- topics(x,K=c(5,10), verb=10) #try multiple Ks
 dim(tpc$theta)
@@ -57,10 +57,10 @@ wordcloud(row.names(tpcs$theta),
 
 ```{r}
 ##regress words vs rating
-x <- 100*dtm/rowSums(dtm)
-regwords.cv <- cv.gamlr(dtm, drugsComTrain_raw$rating)
+x.words <- 100*dtm.new/rowSums(dtm.new)
+regwords.cv <- cv.gamlr(x.words, drugsComTrain_raw$rating)
 ##regress words vs useful count
-regwords.cv.2 <- cv.gamlr(dtm, drugsComTrain_raw$usefulCount)
+regwords.cv.2 <- cv.gamlr(x.words, drugsComTrain_raw$usefulCount)
 ```
 
 step 1 is to probably create word matrix
