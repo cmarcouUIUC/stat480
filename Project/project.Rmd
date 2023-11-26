@@ -33,6 +33,14 @@ head(dtm)
 inspect(dtm[1:5, 1000:1005])
 ```
 
+```{r}
+##regress words vs rating
+x <- 100*dtm/rowSums(dtm)
+regwords.cv <- cv.gamlr(dtm, drugsComTrain_raw$rating)
+##regress words vs useful count
+regwords.cv.2 <- cv.gamlr(dtm, drugsComTrain_raw$usefulCount)
+```
+
 step 1 is to probably create word matrix
 
 ok some ideas
