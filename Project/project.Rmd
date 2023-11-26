@@ -94,7 +94,7 @@ xclust <- sparse.model.matrix(~factor(kfit[[k]]$cluster)+##wine$color) # cluster
 
 ##regress words vs rating
 regwords.cv <- cv.gamlr(x.words, train$rating)
-ratingreg <- gamlr(tpcs$omega, train$rating,family="binomial") #topic regression
+ratingreg <- gamlr(tpcs$omega, train$rating) #topic regression
 ratingregclust <- cv.gamlr(xclust,train$rating,lambda.min.ratio=1e-5)
 
 ##regress words vs useful count
