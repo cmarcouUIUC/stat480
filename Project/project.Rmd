@@ -11,7 +11,11 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r}
 library(readr)
-drugsComTrain_raw <- read_delim("GitHub/stat480/Project/drugsComTrain_raw.tsv", delim = "\t", escape_double = FALSE,  trim_ws = TRUE)
+drugsComTrain_raw <- read_delim("drugsComTrain_raw.tsv", delim = "\t", escape_double = FALSE,  trim_ws = TRUE)
+```
+
+```{r}
+
 ```
 
 step 1 is to probably create word matrix
