@@ -34,6 +34,28 @@ inspect(dtm[1:5, 1000:1005])
 ```
 
 ```{r}
+#topic modeling
+library(maptpx)
+x <- as.simple_triplet_matrix(dtm_2)
+
+tpcs <- topics(x,K=c(5,10), verb=10) #try multiple Ks
+dim(tpc$theta)
+colSums(tpc$theta)
+
+summary(tpcs, n=10) #prints top 10 words per document
+```
+
+```{r}
+library(wordcloud)
+color_palette <- colors=brewer.pal(8, "Dark2") #however many need based on k picked
+
+for (i in 1:10) {
+wordcloud(row.names(tpcs$theta), 
+	freq=tpcs$theta[,i], min.freq=0.004, col=color_palette[i])
+}
+```
+
+```{r}
 ##regress words vs rating
 x <- 100*dtm/rowSums(dtm)
 regwords.cv <- cv.gamlr(dtm, drugsComTrain_raw$rating)
