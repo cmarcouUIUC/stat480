@@ -55,18 +55,7 @@ wordcloud(row.names(tpcs$theta),
 }
 ```
 
-```{r}
-library(gamlr)
-x.words <- 100*as.matrix(dtm.new)/rowSums(as.matrix(dtm.new))
-train <- drugsComTrain_raw[rowTotals> 0, ] #remove empty docs
-##regress words vs rating
-regwords.cv <- cv.gamlr(x.words, train$rating)
-ratingreg <- gamlr(tpcs$omega, train$rating,family="binomial") #topic regression
 
-##regress words vs useful count
-regwords.cv.2 <- cv.gamlr(x.words, train$usefulCount)
-usefulreg <- gamlr(tpcs$omega, train$usefulCount) #topic regression
-```
 
 ```{r clustering}
 xdtm<-scale(dtm.new)
@@ -97,12 +86,24 @@ k_index= k_list[which.min(kaicc)]
 paste0('R^2: ',1 - sum(kfit[[k_index]]$tot.withinss)/kfit[[k_index]]$totss)
 ```
 
-```{r cluster reg}
+```{r}
+library(gamlr)
+x.words <- 100*as.matrix(dtm.new)/rowSums(as.matrix(dtm.new))
+train <- drugsComTrain_raw[rowTotals> 0, ] #remove empty docs
 xclust <- sparse.model.matrix(~factor(kfit[[k]]$cluster)+##wine$color) # cluster membership matrix
-regclust <- cv.gamlr(xclust,###wine$quality,lambda.min.ratio=1e-5) # 
-plot(regclust)
-max(1-regclust$cvm/regclust$cvm[1]) # OOS R2 around 0.22
+
+##regress words vs rating
+regwords.cv <- cv.gamlr(x.words, train$rating)
+ratingreg <- gamlr(tpcs$omega, train$rating,family="binomial") #topic regression
+ratingregclust <- cv.gamlr(xclust,train$rating,lambda.min.ratio=1e-5)
+
+##regress words vs useful count
+regwords.cv.2 <- cv.gamlr(x.words, train$usefulCount)
+usefulreg <- gamlr(tpcs$omega, train$usefulCount) #topic regression
+usefulregclust <- cv.gamlr(xclust,train$usefulCount,lambda.min.ratio=1e-5)
+
 ```
+
 
 
 step 1 is to probably create word matrix
