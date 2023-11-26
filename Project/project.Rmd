@@ -56,11 +56,16 @@ wordcloud(row.names(tpcs$theta),
 ```
 
 ```{r}
+library(gamlr)
+x.words <- 100*as.matrix(dtm.new)/rowSums(as.matrix(dtm.new))
+train <- drugsComTrain_raw[rowTotals> 0, ] #remove empty docs
 ##regress words vs rating
-x.words <- 100*dtm.new/rowSums(dtm.new)
-regwords.cv <- cv.gamlr(x.words, drugsComTrain_raw$rating)
+regwords.cv <- cv.gamlr(x.words, train$rating)
+ratingreg <- gamlr(tpcs$omega, train$rating,family="binomial") #topic regression
+
 ##regress words vs useful count
-regwords.cv.2 <- cv.gamlr(x.words, drugsComTrain_raw$usefulCount)
+regwords.cv.2 <- cv.gamlr(x.words, train$usefulCount)
+usefulreg <- gamlr(tpcs$omega, train$usefulCount) #topic regression
 ```
 
 ```{r clustering}
