@@ -1,0 +1,234 @@
+---
+title: "Project Version 2.rmd"
+output: html_document
+date: "2023-12-02"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(readr)
+drugsComTrain_raw <- read_delim("drugsComTrain_raw.tsv", delim = "\t", escape_double = FALSE,  trim_ws = TRUE)
+```
+
+```{r}
+library(tm)
+library(maptpx)
+library(dplyr)
+set.seed(123)
+
+create_dtm <- function(condition) {
+  train <- drugsComTrain_raw[(drugsComTrain_raw$condition==condition),]
+  dtm <- DocumentTermMatrix(train$review,
+                            control = list(stopwords = TRUE, 
+                                           removeNumbers = TRUE,
+                                           removePunctuation = TRUE,
+                                           stemming = TRUE))
+  dtm <- removeSparseTerms(dtm,0.995) #remove infrequent terms
+  rowTotals <- apply(dtm , 1, sum) #Find the sum of words in each Document
+  dtm.new   <- dtm[rowTotals> 0, ]           #remove all docs without words
+  train <- train[rowTotals> 0, ] #remove empty docs
+  ##remove drug NAMES?
+  returns <- list(dtm.new, train)
+  return(returns)
+}
+```
+
+```{r}
+head(unique(drugsComTrain_raw$condition),20)
+head(drugsComTrain_raw %>% count(condition) %>% arrange(desc(n)), 3)
+```
+
+##BIRTH CONTROL MODELS##
+
+```{r}
+bc<- create_dtm('Birth Control')
+dtm_bc <- bc[[1]]
+train_bc <- bc[[2]]
+x_bc <- as.simple_triplet_matrix(dtm_bc)
+```
+
+```{r}
+tpcs_bc <- topics(x_bc,K=c(5,10,20,30)) #initial run
+dim(tpcs_bc$theta)
+colSums(tpcs_bc$theta)
+```
+```{r bc clustering}
+xdtm_bc<-scale(dtm_bc)
+k_list <-(1:20)
+kfit_bc <- lapply(k_list, function(k) kmeans(xdtm_bc,k))
+
+source("kIC.R") ## utility script
+kaicc_bc <- sapply(kfit_bc,kIC)
+kbic_bc <- sapply(kfit_bc,kIC,"B")
+
+## plot 'em
+plot(y=kaicc_bc, x=k_list, xlab="K", ylab="IC", 
+	ylim=range(c(kaicc_bc,kbic_bc)),
+	bty="n", type="l", lwd=2)
+lines(y=kbic_bc, x=k_list, xlab="K", ylab="IC", 
+	ylim=range(c(kaicc_bc,kbic_bc)),
+	bty="n", type="l", lwd=2, col='red')
+
+abline(v=k_list[which.min(kaicc_bc)], col=4)
+abline(v=k_list[which.min(kbic_bc)],col=3)
+
+paste0('AIC Optimal k: ', k_list[which.min(kaicc_bc)])
+paste0('BIC Optimal k: ',k_list[which.min(kbic_bc)])
+
+
+##Get r^2
+k_index_bc= k_list[which.min(kaicc_bc)]
+paste0('R^2: ',1 - sum(kfit_bc[[k_index_bc]]$tot.withinss)/kfit_bc[[k_index_bc]]$totss)
+```
+
+```{r}
+train_bc$rating_group <-ifelse(train_bc$rating>=8,1,0)
+train_bc %>%count(rating_group)
+```
+
+```{r bc final models}
+library(gamlr)
+x_bc.words <- 100*as.matrix(dtm_bc)/rowSums(as.matrix(dtm_bc))
+xclust_bc <- sparse.model.matrix(~factor(kfit_bc[[k_index_bc]]$cluster)) # cluster membership matrix
+
+#regress words vs rating
+regwords_bc.cv <- cv.gamlr(x_bc.words, train_bc$rating_group, family="binomial")
+ratingreg_bc <- gamlr(tpcs_bc$omega, train_bc$rating_group, family="binomial") #topic regression
+ratingregclust_bc <- cv.gamlr(xclust_bc,train_bc$rating_group,lambda.min.ratio=1e-5,family="binomial")
+
+##regress words vs useful count
+regwords_bc.cv.2 <- cv.gamlr(x_bc.words, train_bc$usefulCount)
+usefulreg_bc <- gamlr(tpcs_bc$omega, train_bc$usefulCount) #topic regression
+usefulregclust_bc <- cv.gamlr(xclust_bc,train_bc$usefulCount,lambda.min.ratio=1e-5)
+
+```
+
+##DEPRESSION MODELS##
+
+```{r d data setup}
+d<- create_dtm('Depression')
+dtm_d <- d[[1]]
+train_d <- d[[2]]
+x_d <- as.simple_triplet_matrix(dtm_d)
+```
+
+```{r d topic models}
+tpcs_d <- topics(x_d,K=c(5,10,20,30)) #initial run
+dim(tpcs_d$theta)
+colSums(tpcs_d$theta)
+```
+
+```{r d clustering}
+xdtm_d<-scale(dtm_d)
+k_list <-(1:20)
+kfit_d <- lapply(k_list, function(k) kmeans(xdtm_d,k))
+
+kaicc_d <- sapply(kfit_d,kIC)
+kbic_d<- sapply(kfit_d,kIC,"B")
+
+## plot 'em
+plot(y=kaicc_d, x=k_list, xlab="K", ylab="IC", 
+	ylim=range(c(kaicc_d,kbic_d)),
+	bty="n", type="l", lwd=2)
+lines(y=kbic_d, x=k_list, xlab="K", ylab="IC", 
+	ylim=range(c(kaicc_d,kbic_d)),
+	bty="n", type="l", lwd=2, col='red')
+
+abline(v=k_list[which.min(kaicc_d)], col=4)
+abline(v=k_list[which.min(kbic_d)],col=3)
+
+paste0('AIC Optimal k: ', k_list[which.min(kaicc_d)])
+paste0('BIC Optimal k: ',k_list[which.min(kbic_d)])
+
+##Get r^2
+k_index_d= k_list[which.min(kaicc_d)]
+paste0('R^2: ',1 - sum(kfit_d[[k_index_d]]$tot.withinss)/kfit_d[[k_index_d]]$totss)
+```
+
+```{r}
+train_d$rating_group <-ifelse(train_d$rating>=8,1,0)
+train_d %>%count(rating_group)
+```
+
+```{r d final models}
+x_d.words <- 100*as.matrix(dtm_d)/rowSums(as.matrix(dtm_d))
+xclust_d <- sparse.model.matrix(~factor(kfit_d[[k_index_d]]$cluster)) # cluster membership matrix
+
+#regress words vs rating
+regwords_d.cv <- cv.gamlr(x_d.words, train_d$rating_group, family="binomial")
+ratingreg_d <- gamlr(tpcs_d$omega, train_d$rating_group, family="binomial") #topic regression
+ratingregclust_d <- cv.gamlr(xclust_d,train_d$rating_group,lambda.min.ratio=1e-5,family="binomial")
+
+##regress words vs useful count
+regwords_d.cv.2 <- cv.gamlr(x_d.words, train_d$usefulCount)
+usefulreg_d <- gamlr(tpcs_d$omega, train_d$usefulCount) #topic regression
+usefulregclust_d <- cv.gamlr(xclust_d,train_d$usefulCount,lambda.min.ratio=1e-5)
+
+```
+
+
+##PAIN MODELS##
+
+```{r p data setup}
+p<- create_dtm('Pain')
+dtm_p <- p[[1]]
+train_p <- p[[2]]
+x_p <- as.simple_triplet_matrix(dtm_p)
+```
+
+```{r p topic models}
+tpcs_p <- topics(x_p,K=c(5,10,20,30)) #initial run
+dim(tpcs_p$theta)
+colSums(tpcs_p$theta)
+```
+
+```{r p clustering}
+xdtm_p<-scale(dtm_p)
+k_list <-(1:20)
+kfit_p <- lapply(k_list, function(k) kmeans(xdtm_p,k))
+
+kaicc_p <- sapply(kfit_p,kIC)
+kbic_p<- sapply(kfit_p,kIC,"B")
+
+## plot 'em
+plot(y=kaicc_p, x=k_list, xlab="K", ylab="IC", 
+	ylim=range(c(kaicc_p,kbic_p)),
+	bty="n", type="l", lwd=2)
+lines(y=kbic_p, x=k_list, xlab="K", ylab="IC", 
+	ylim=range(c(kaicc_p,kbic_p)),
+	bty="n", type="l", lwd=2, col='red')
+
+abline(v=k_list[which.min(kaicc_p)], col=4)
+abline(v=k_list[which.min(kbic_p)],col=3)
+
+paste0('AIC Optimal k: ', k_list[which.min(kaicc_p)])
+paste0('BIC Optimal k: ',k_list[which.min(kbic_p)])
+
+##Get r^2
+k_index_p= k_list[which.min(kaicc_p)]
+paste0('R^2: ',1 - sum(kfit_p[[k_index_p]]$tot.withinss)/kfit_p[[k_index_p]]$totss)
+```
+
+```{r}
+train_p$rating_group <-ifelse(train_p$rating>=8,1,0)
+train_p %>%count(rating_group)
+```
+
+```{r p final models}
+x_d.words <- 100*as.matrix(dtm_p)/rowSums(as.matrix(dtm_p))
+xclust_p <- sparse.model.matrix(~factor(kfit_d[[k_index_p]]$cluster)) # cluster membership matrix
+
+#regress words vs rating
+regwords_p.cv <- cv.gamlr(x_p.words, train_p$rating_group, family="binomial")
+ratingreg_p <- gamlr(tpcs_d$omega, train_p$rating_group, family="binomial") #topic regression
+ratingregclust_p <- cv.gamlr(xclust_p,train_p$rating_group,lambda.min.ratio=1e-5,family="binomial")
+
+##regress words vs useful count
+regwords_p.cv.2 <- cv.gamlr(x_p.words, train_p$usefulCount)
+usefulreg_p <- gamlr(tpcs_p$omega, train_p$usefulCount) #topic regression
+usefulregclust_p <- cv.gamlr(xclust_p,train_p$usefulCount,lambda.min.ratio=1e-5)
+
+```
