@@ -63,7 +63,9 @@ my_model <- readRDS("tpcs_bc.rds") #test reloading model
 ```{r bc clustering}
 xdtm_bc<-scale(dtm_bc)
 k_list <-(1:20)
+set.seed(123)
 kfit_bc <- lapply(k_list, function(k) kmeans(xdtm_bc,k))
+saveRDS(kfit_bc, "cltrs_bc.rds")
 
 source("kIC.R") ## utility script
 kaicc_bc <- sapply(kfit_bc,kIC)
@@ -76,9 +78,10 @@ plot(y=kaicc_bc, x=k_list, xlab="K", ylab="IC",
 lines(y=kbic_bc, x=k_list, xlab="K", ylab="IC", 
 	ylim=range(c(kaicc_bc,kbic_bc)),
 	bty="n", type="l", lwd=2, col='red')
-
 abline(v=k_list[which.min(kaicc_bc)], col=4)
 abline(v=k_list[which.min(kbic_bc)],col=3)
+
+png("bc_cluster.png")
 
 paste0('AIC Optimal k: ', k_list[which.min(kaicc_bc)])
 paste0('BIC Optimal k: ',k_list[which.min(kbic_bc)])
@@ -129,7 +132,10 @@ colSums(tpcs_d$theta)
 ```{r d clustering}
 xdtm_d<-scale(dtm_d)
 k_list <-(1:20)
-kfit_d <- lapply(k_list, function(k) kmeans(xdtm_d,k))
+set.seed(123)
+kfit_d <- lapply(k_list, function(k) kmeans(xdtm_d,k, iter.max = 20))
+saveRDS(kfit_d, "cltrs_d.rds")
+
 
 kaicc_d <- sapply(kfit_d,kIC)
 kbic_d<- sapply(kfit_d,kIC,"B")
@@ -144,6 +150,9 @@ lines(y=kbic_d, x=k_list, xlab="K", ylab="IC",
 
 abline(v=k_list[which.min(kaicc_d)], col=4)
 abline(v=k_list[which.min(kbic_d)],col=3)
+
+png("d_cluster.png")
+
 
 paste0('AIC Optimal k: ', k_list[which.min(kaicc_d)])
 paste0('BIC Optimal k: ',k_list[which.min(kbic_d)])
@@ -193,7 +202,9 @@ colSums(tpcs_p$theta)
 ```{r p clustering}
 xdtm_p<-scale(dtm_p)
 k_list <-(1:20)
+set.seed(123)
 kfit_p <- lapply(k_list, function(k) kmeans(xdtm_p,k))
+saveRDS(kfit_p, "cltrs_p.rds")
 
 kaicc_p <- sapply(kfit_p,kIC)
 kbic_p<- sapply(kfit_p,kIC,"B")
@@ -205,9 +216,11 @@ plot(y=kaicc_p, x=k_list, xlab="K", ylab="IC",
 lines(y=kbic_p, x=k_list, xlab="K", ylab="IC", 
 	ylim=range(c(kaicc_p,kbic_p)),
 	bty="n", type="l", lwd=2, col='red')
-
 abline(v=k_list[which.min(kaicc_p)], col=4)
 abline(v=k_list[which.min(kbic_p)],col=3)
+
+png("p_cluster.png")
+
 
 paste0('AIC Optimal k: ', k_list[which.min(kaicc_p)])
 paste0('BIC Optimal k: ',k_list[which.min(kbic_p)])
