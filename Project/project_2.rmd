@@ -25,7 +25,8 @@ create_dtm <- function(condition) {
                             control = list(stopwords = TRUE, 
                                            removeNumbers = TRUE,
                                            removePunctuation = TRUE,
-                                           stemming = TRUE))
+                                           stemming = TRUE, 
+					   removeWords = list(train$drugName)))
   dtm <- removeSparseTerms(dtm,0.995) #remove infrequent terms
   rowTotals <- apply(dtm , 1, sum) #Find the sum of words in each Document
   dtm.new   <- dtm[rowTotals> 0, ]           #remove all docs without words
