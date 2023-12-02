@@ -55,6 +55,11 @@ tpcs_bc <- topics(x_bc,K=c(5,10,20,30)) #initial run
 dim(tpcs_bc$theta)
 colSums(tpcs_bc$theta)
 ```
+```{r save bc topic model}
+saveRDS(tpcs_bc, "tpcs_bc.rds")
+my_model <- readRDS("tpcs_bc.rds") #test reloading model
+```
+
 ```{r bc clustering}
 xdtm_bc<-scale(dtm_bc)
 k_list <-(1:20)
