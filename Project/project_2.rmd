@@ -242,12 +242,53 @@ xclust_p <- sparse.model.matrix(~factor(kfit_d[[k_index_p]]$cluster)) # cluster 
 
 #regress words vs rating
 regwords_p.cv <- cv.gamlr(x_p.words, train_p$rating_group, family="binomial")
-ratingreg_p <- gamlr(tpcs_d$omega, train_p$rating_group, family="binomial") #topic regression
+ratingreg_p <- cv.gamlr(tpcs_d$omega, train_p$rating_group, family="binomial") #topic regression
 ratingregclust_p <- cv.gamlr(xclust_p,train_p$rating_group,lambda.min.ratio=1e-5,family="binomial")
 
 ##regress words vs useful count
 regwords_p.cv.2 <- cv.gamlr(x_p.words, train_p$usefulCount)
-usefulreg_p <- gamlr(tpcs_p$omega, train_p$usefulCount) #topic regression
+usefulreg_p <- cv.gamlr(tpcs_p$omega, train_p$usefulCount) #topic regression
 usefulregclust_p <- cv.gamlr(xclust_p,train_p$usefulCount,lambda.min.ratio=1e-5)
 
 ```
+
+```{r MSE}
+# min OOS MSE - rating group
+min(ratingreg_bc$cvm) #topics #1.085992
+min(regwords_bc.cv$cvm) #words #0.805817
+min(ratingregclust_bc$cvm) #clusters #1.344298
+
+# min OOS MSE - useful count
+min(usefulreg_bc$cvm) #topics #309.0771
+min(regwords_bc.cv.2$cvm) #words #302.2488
+min(usefulregclust_bc$cvm) #clusters #312.152
+```
+```{r}
+create_dtm_tst <- function(condition) {
+  test<- drugsComTest_raw[(drugsComTest_raw$condition==condition),]
+  dtm <- DocumentTermMatrix(test$review,
+                            control = list(stopwords = TRUE, 
+                                           removeNumbers = TRUE,
+                                           removePunctuation = TRUE,
+                                           stemming = TRUE, 
+                                           removeWords = list(test$drugName) ))
+  dtm <- removeSparseTerms(dtm,0.995) #remove infrequent terms
+  rowTotals <- apply(dtm , 1, sum) #Find the sum of words in each Document
+  dtm.new   <- dtm[rowTotals> 0, ]           #remove all docs without words
+  test<- test[rowTotals> 0, ] #remove empty docs
+  ##remove drug NAMES?
+  returns <- list(dtm.new, test)
+  return(returns)
+}
+
+```
+
+```{r}
+#test set
+drugsComTest_raw <- read_delim("drugsComTest_raw.tsv", delim = "\t", escape_double = FALSE,  trim_ws = TRUE)
+bc_test<- create_dtm_tst('Birth Control')
+dtm_bc_tst <- bc_test[[1]]
+train_bc_tst <- bc_test[[2]]
+x_bc_tst <- as.simple_triplet_matrix(dtm_bc_tst)
+```
+#had an issue using the predict function - might not even need to do this part
