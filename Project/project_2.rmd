@@ -63,7 +63,7 @@ my_model <- readRDS("tpcs_bc.rds") #test reloading model
 
 ```{r bc clustering}
 xdtm_bc<-scale(dtm_bc)
-k_list <-(1:20)
+k_list <-(1:30)
 set.seed(123)
 kfit_bc <- lapply(k_list, function(k) kmeans(xdtm_bc,k))
 saveRDS(kfit_bc, "cltrs_bc.rds")
@@ -119,12 +119,12 @@ usefulregclust_bc <- cv.gamlr(xclust_bc,train_bc$usefulCount,lambda.min.ratio=1e
 # min OOS MSE - rating group
 min(ratingreg_bc$cvm) #topics #1.085992
 min(regwords_bc.cv$cvm) #words #0.805817
-min(ratingregclust_bc$cvm) #clusters #1.344298
+min(ratingregclust_bc$cvm) #clusters #1.261637
 
 # min OOS MSE - useful count
 min(usefulreg_bc$cvm) #topics #309.0771
 min(regwords_bc.cv.2$cvm) #words #302.2488
-min(usefulregclust_bc$cvm) #clusters #312.152
+min(usefulregclust_bc$cvm) #clusters #311.4784
 ```
 ```{r}
 create_dtm_tst <- function(condition) {
