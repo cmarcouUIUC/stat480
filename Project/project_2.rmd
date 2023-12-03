@@ -56,9 +56,44 @@ tpcs_bc <- topics(x_bc,K=c(5,10,20,30)) #initial run
 dim(tpcs_bc$theta)
 colSums(tpcs_bc$theta)
 ```
+
 ```{r save bc topic model}
 saveRDS(tpcs_bc, "tpcs_bc.rds")
-my_model <- readRDS("tpcs_bc.rds") #test reloading model
+```
+
+```{r}
+set.seed(123)
+tpcs_bc_2 <- topics(x_bc,K=c(35,40)) #second run - chooses 35
+dim(tpcs_bc_2$theta)
+colSums(tpcs_bc_2$theta)
+```
+
+```{r save bc topic model}
+saveRDS(tpcs_bc_2, "tpcs_bc_2.rds")
+```
+
+```{r}
+set.seed(123)
+tpcs_bc_3 <- topics(x_bc,K=c(31,32, 33, 34)) #third run - chooses 35
+dim(tpcs_bc_3$theta)
+colSums(tpcs_bc_3$theta)
+```
+
+```{r save bc topic model}
+saveRDS(tpcs_bc_3, "tpcs_bc_3.rds")
+```
+
+```{r example topic word clouds}
+library(wordcloud)
+color_palette <- brewer.pal(8, "Dark2") #sample some topics
+
+for (i in 1:8) {
+  w <- wordcloud(row.names(tpcs_bc_3$theta), 
+  	freq=tpcs_bc_3$theta[,i], min.freq=0.004, col=color_palette[i])
+  filename <- paste0(paste0("word_clusters_", i),".png")
+  print(filename)
+  png(filename)
+}
 ```
 
 ```{r bc clustering}
