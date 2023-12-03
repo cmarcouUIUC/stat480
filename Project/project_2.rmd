@@ -161,6 +161,13 @@ min(usefulreg_bc$cvm) #topics #309.0771
 min(regwords_bc.cv.2$cvm) #words #302.2488
 min(usefulregclust_bc$cvm) #clusters #311.4784
 ```
+
+```{r}
+coefmat=as.matrix(coef(regwords_bc.cv))
+head(coefmat[order(abs(coefmat[, 1]), decreasing=TRUE),],11)
+```
+
+
 ```{r}
 create_dtm_tst <- function(condition) {
   test<- drugsComTest_raw[(drugsComTest_raw$condition==condition),]
